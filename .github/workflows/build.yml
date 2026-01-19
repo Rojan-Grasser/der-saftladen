@@ -42,11 +42,11 @@ jobs:
           php-version: '8.4'
           extensions: mbstring, bcmath, pdo_mysql
           tools: composer:v2
-#      - name: Download composer vendor
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: composer-vendor
-#          path: ./vendor
+      - name: Download composer vendor
+        uses: actions/download-artifact@v4
+        with:
+          name: composer-vendor
+          path: ./vendor
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
