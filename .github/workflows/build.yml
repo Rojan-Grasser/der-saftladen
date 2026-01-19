@@ -55,10 +55,6 @@ jobs:
       image: gcr.io/kaniko-project/executor:debug
     env:
       DOCKER_CONFIG: /kaniko/.docker/
-      REGISTRY: ghcr.io
-      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
-      REGISTRY_PASS: ${{ secrets.REGISTRY_PASS }}
-      DOCKER_IMAGE_URL: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}
     steps:
       - name: Download Vue build
         uses: actions/download-artifact@v3
@@ -73,11 +69,11 @@ jobs:
           path: ./vendor
       - name: Prepare Docker auth
         run: |
-          echo "{\"auths\":{\"${REGISTRY}\":{\"username\":\"${REGISTRY_USER}\",\"password\":\"${REGISTRY_PASS}\"}}}" > /kaniko/.docker/config.json
+          echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ secrets.REGISTRY_USER }}\",\"password\":\"${{ secrets.REGISTRY_PASS }}\"}}}" > /kaniko/.docker/config.json
 
       - name: Build and push Docker image
         run: |
           /kaniko/executor \
             --context $GITHUB_WORKSPACE \
             --dockerfile $GITHUB_WORKSPACE/Dockerfile \
-            --destination $DOCKER_IMAGE_URL
+            --destination ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}
