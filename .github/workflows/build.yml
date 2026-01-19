@@ -4,18 +4,16 @@ on:
   push:
     branches:
       - master
-      - build-actions-pipeline
   pull_request:
     branches:
       - master
-      - build-actions-pipeline
 
 permissions:
   contents: read
   packages: write
 
 jobs:
-  install-composer-deps:
+  build-backend:
     name: Install composer deps
     runs-on: ubuntu-latest
     steps:
@@ -35,10 +33,10 @@ jobs:
           name: composer-vendor
           path: vendor
 
-  build-vue:
-    name: build vue
+  build-frontend:
+    name: build frontend
     runs-on: ubuntu-latest
-    needs: install-composer-deps
+    needs: build-backend
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -69,7 +67,7 @@ jobs:
   build-docker-image:
     name: Build docker image
     runs-on: ubuntu-latest
-    needs: [ build-vue, install-composer-deps ]
+    needs: [ build-frontend, build-backend ]
     steps:
       - uses: actions/checkout@v3
       - name: Download Vue build
@@ -104,9 +102,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-docker-image
     steps:
-      # I didn't see the need to add this to the package.json since its not used for local development / productive
-      - run: npm i semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/github @semantic-release/changelog @semantic-release/git
-
+      - name: Install dependencies
+        run: npm install --frozen-lockfile
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
