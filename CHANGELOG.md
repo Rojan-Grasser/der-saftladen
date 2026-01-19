@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/rojan-grasser/der-saftladen/compare/v1.0.0...v1.0.1) (2026-01-19)
+
+
+### Bug Fixes
+
+* Fixed tag step image tag ([c6dbe62](https://github.com/rojan-grasser/der-saftladen/commit/c6dbe62ffa9333e741cff59c36d3cfbb7a2a0104))
+
 # 1.0.0 (2026-01-19)
 
 
