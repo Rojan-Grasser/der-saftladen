@@ -3,7 +3,11 @@ FROM php:8.4-fpm-alpine
 WORKDIR /var/www/html
 
 RUN apk add --no-cache bash libpng libpng-dev oniguruma-dev icu-dev libxml2-dev libpq-dev \
-    && docker-php-ext-install pdo_mysql mbstring intl xml opcache pdo_pgsql
+    && docker-php-ext-install pdo_mysql mbstring intl xml opcache pdo_pgsql \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install swoole \
+    && docker-php-ext-enable swoole \
+    && apk del .build-deps
 
 COPY . .
 
