@@ -98,3 +98,32 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+  tag-docker-image:
+    name: Tag docker image
+    runs-on: ubuntu-latest
+    needs: build-docker-image
+    steps:
+      # I didn't see the need to add this to the package.json since its not used for local development / productive
+      - run: npm i semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/github @semantic-release/changelog @semantic-release/git
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: rojan-grasser
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "FROM ghcr.io/${{ github.repository }}:${{ github.sha }}" > Dockerfile
+
+      - name: Semantic Release
+        id: release
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ steps.release.outputs.version }}
