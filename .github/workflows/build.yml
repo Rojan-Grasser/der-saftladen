@@ -9,25 +9,6 @@ on:
       - master
       - build-actions-pipeline
 jobs:
-  build-vue:
-    name: build vue
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install dependencies
-        run: npm install --frozen-lockfile
-      - name: Build app
-        run: npm run build
-      - name: Upload Vue build
-        uses: actions/upload-artifact@v4
-        with:
-          name: vue-dist
-          path: dist
-
   install-composer-deps:
     name: Install composer deps
     runs-on: ubuntu-latest
@@ -49,9 +30,35 @@ jobs:
           name: composer-vendor
           path: vendor
 
+  build-vue:
+    name: build vue
+    runs-on: ubuntu-latest
+    needs: install-composer-deps
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download composer vendor
+        uses: actions/download-artifact@v4
+        with:
+          name: composer-vendor
+          path: ./vendor
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --frozen-lockfile
+      - name: Build app
+        run: npm run build
+      - name: Upload Vue build
+        uses: actions/upload-artifact@v4
+        with:
+          name: vue-dist
+          path: public/build
+
   build-docker-image:
     name: Build docker image
     runs-on: ubuntu-latest
+    needs: [build-vue, install-composer-deps]
     container:
       image: gcr.io/kaniko-project/executor:debug
     env:
@@ -61,7 +68,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vue-dist
-          path: ./dist
+          path: ./public/build
 
       - name: Download composer vendor
         uses: actions/download-artifact@v4
