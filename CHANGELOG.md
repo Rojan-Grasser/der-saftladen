@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/rojan-grasser/der-saftladen/compare/v1.0.3...v1.0.4) (2026-01-20)
+
+
+### Bug Fixes
+
+* Fixed roadrunner installation in dockerfile ([88ccebd](https://github.com/rojan-grasser/der-saftladen/commit/88ccebd8364a66e5bc81ade219bb8d07670cd304))
+
 ## [1.0.3](https://github.com/rojan-grasser/der-saftladen/compare/v1.0.2...v1.0.3) (2026-01-20)
 
 
