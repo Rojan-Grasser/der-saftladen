@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/rojan-grasser/der-saftladen/compare/v1.2.0...v1.2.1) (2026-01-20)
+
+
+### Bug Fixes
+
+* Added new custom bot for releasing ([7e7167b](https://github.com/rojan-grasser/der-saftladen/commit/7e7167b0f68f745ead5fa32fff50313ada7ccc04))
+* Added new custom bot for releasing ([3198f77](https://github.com/rojan-grasser/der-saftladen/commit/3198f7703eb2cd58bc941dad2feada33c2baf7cc))
+
 # [1.2.0](https://github.com/rojan-grasser/der-saftladen/compare/v1.1.0...v1.2.0) (2026-01-20)
 
 
