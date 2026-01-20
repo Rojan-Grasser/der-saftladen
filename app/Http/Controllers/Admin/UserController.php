@@ -60,7 +60,7 @@ class UserController extends Controller
         //
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request, string $id)
     {
         $validated = $request->validate([
             'role' => ['sometimes', new Enum(UserRole::class)],
