@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/rojan-grasser/der-saftladen/compare/v1.0.5...v1.1.0) (2026-01-20)
+
+
+### Features
+
+* add `hasStatus` method and update admin routes ([57c5dce](https://github.com/rojan-grasser/der-saftladen/commit/57c5dce270b325a04e6e63d27b0a926a1008ea4d)), closes [#21](https://github.com/rojan-grasser/der-saftladen/issues/21)
+* add admin dashboard ([c96cd71](https://github.com/rojan-grasser/der-saftladen/commit/c96cd71525605eb519977d2cfc2af9617bbaf566))
+
 ## [1.0.5](https://github.com/rojan-grasser/der-saftladen/compare/v1.0.4...v1.0.5) (2026-01-20)
 
 
