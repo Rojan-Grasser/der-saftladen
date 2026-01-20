@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified', EnsureUserIsAdmin::class, EnsureUserIsAct
             return Inertia::render('AdminDashboard');
         })->name('admin.dashboard');
 
-        // Route::get('/users', [UserController::class, 'index'])->name('admin.users');
+        Route::get('/users', [UserController::class, 'index'])->name('admin.users');
 
         // Add any other admin routes here
     });
