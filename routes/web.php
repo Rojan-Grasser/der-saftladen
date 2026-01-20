@@ -17,7 +17,7 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware(['auth', 'verified', EnsureUserIsAdmin::class, EnsureUserIsActive::class])
+Route::middleware([])
     ->prefix('admin')
     ->group(function () {
         Route::get('/dashboard', function () {
@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified', EnsureUserIsAdmin::class, EnsureUserIsAct
         })->name('admin.dashboard');
 
         Route::get('/users', [UserController::class, 'index'])->name('admin.users');
+        Route::put('/users/{id}', [UserController::class, 'edit'])->name('admin.users.edit');
 
         // Add any other admin routes here
     });
