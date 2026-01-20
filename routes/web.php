@@ -11,10 +11,6 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('inactive', function () {
-    return Inertia::render('Inactive');
-})->middleware(['auth', 'active'])->name('inactive');
-
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified', 'active'])->name('dashboard');

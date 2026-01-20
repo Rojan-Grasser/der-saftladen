@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\UserStatus;
 use Closure;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsActive
@@ -16,20 +17,8 @@ class EnsureUserIsActive
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-
-        if ($user && $user->hasStatus(UserStatus::ACTIVE)) {
-            if ($request->routeIs('inactive')) {
-                return redirect()->route('dashboard');
-            }
-            return $next($request);
-        }
-
-        if (!$user || !$user->hasStatus(UserStatus::ACTIVE)) {
-            if ($request->routeIs('inactive')) {
-                return $next($request);
-            }
-            return redirect()->route('inactive');
+        if (!$request->user()->hasStatus(UserStatus::ACTIVE)) {
+            return Inertia::render('Inactive')->toResponse($request);
         }
         return $next($request);
     }
