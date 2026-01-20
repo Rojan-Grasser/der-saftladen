@@ -1,3 +1,11 @@
+## [1.0.3](https://github.com/rojan-grasser/der-saftladen/compare/v1.0.2...v1.0.3) (2026-01-20)
+
+
+### Bug Fixes
+
+* Added octane config to git ([81101f0](https://github.com/rojan-grasser/der-saftladen/commit/81101f0f308efbdbdba0fc27add994640087d222))
+* Fixed dockerfile ([565a431](https://github.com/rojan-grasser/der-saftladen/commit/565a431bbbb3a7603c0e5513b606cd7cbdff0ec6))
+
 ## [1.0.2](https://github.com/rojan-grasser/der-saftladen/compare/v1.0.1...v1.0.2) (2026-01-20)
 
 
