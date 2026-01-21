@@ -46,7 +46,7 @@ class ProfessionalAreaController extends Controller
         }
     }
 
-    public function edit(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         $validated = $request->validate([
             'name' => ['sometimes', 'string'],
