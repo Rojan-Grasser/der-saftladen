@@ -1,11 +1,28 @@
 <script setup lang="ts">
+
 import { Head, Link } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
 
 import { dashboard, login, register } from '@/routes';
 
 defineProps<{
     canRegister?: boolean;
 }>();
+
+const featuresVisible = ref(false);
+
+onMounted(() => {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                featuresVisible.value = true;
+            }
+        });
+    }, { threshold: 0.2 });
+
+    const target = document.getElementById('features-section');
+    if (target) observer.observe(target);
+});
 </script>
 
 <template>
@@ -26,7 +43,7 @@ defineProps<{
         </div>
 
         <!-- Header -->
-        <header class="relative z-10 w-full pt-6 pb-4 px-6 md:px-12">
+        <header class="fixed top-0 left-0 right-0 z-50 w-full pt-6 pb-4 px-6 md:px-12 transition-all duration-300 backdrop-blur-sm">
             <div class="max-w-7xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center justify-center size-10 rounded-lg bg-sidebar-accent/50 border border-sidebar-border text-primary">
@@ -53,68 +70,81 @@ defineProps<{
         </header>
 
         <!-- Main Content -->
-        <main class="relative z-10 flex-grow flex flex-col items-center justify-center px-6 py-16 md:py-24 text-center">
-            <div class="max-w-5xl mx-auto flex flex-col items-center gap-10">
-                <div class="space-y-6">
-                    <h1 class="text-6xl md:text-8xl font-extrabold tracking-tight text-foreground pb-2">
-                        Ausbilderportal
-                    </h1>
-                    <p class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                        Die zentrale Schnittstelle für Ausbildung, Projektmanagement und Kommunikation. Effizient, übersichtlich und sicher.
-                    </p>
-                </div>
+        <main class="relative z-10 flex-grow flex flex-col">
+            <!-- Hero Section -->
+            <section class="min-h-screen flex flex-col items-center justify-center px-6 text-center pt-20">
+                <div class="max-w-5xl mx-auto flex flex-col items-center gap-10">
+                    <div class="space-y-6">
+                        <h1 class="text-6xl md:text-8xl font-extrabold tracking-tight text-foreground pb-2">
+                            Ausbilderportal
+                        </h1>
+                        <p class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                            Die zentrale Schnittstelle für Ausbildung, Projektmanagement und Kommunikation. Effizient, übersichtlich und sicher.
+                        </p>
+                    </div>
 
-                <div class="flex flex-col sm:flex-row gap-4 w-full justify-center mt-6">
-                    <template v-if="$page.props.auth.user">
-                         <Link :href="dashboard()" class="inline-flex h-12 md:h-14 min-w-[180px] cursor-pointer items-center justify-center rounded-lg bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all transform hover:-translate-y-0.5">
-                            Zum Dashboard
-                        </Link>
-                    </template>
-                    <template v-else>
-                        <Link :href="login()" class="inline-flex h-12 md:h-14 min-w-[180px] cursor-pointer items-center justify-center rounded-lg bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all transform hover:-translate-y-0.5">
-                            Einloggen
-                        </Link>
-                        <Link v-if="canRegister" :href="register()" class="inline-flex h-12 md:h-14 min-w-[180px] cursor-pointer items-center justify-center rounded-lg bg-transparent border border-input px-8 text-base font-bold text-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                            Jetzt Registrieren
-                        </Link>
-                    </template>
+                    <div class="flex flex-col sm:flex-row gap-4 w-full justify-center mt-6">
+                        <template v-if="$page.props.auth.user">
+                             <Link :href="dashboard()" class="inline-flex h-12 md:h-14 min-w-[180px] cursor-pointer items-center justify-center rounded-lg bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all transform hover:-translate-y-0.5">
+                                Zum Dashboard
+                            </Link>
+                        </template>
+                        <template v-else>
+                            <Link :href="login()" class="inline-flex h-12 md:h-14 min-w-[180px] cursor-pointer items-center justify-center rounded-lg bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all transform hover:-translate-y-0.5">
+                                Einloggen
+                            </Link>
+                            <Link v-if="canRegister" :href="register()" class="inline-flex h-12 md:h-14 min-w-[180px] cursor-pointer items-center justify-center rounded-lg bg-transparent border border-input px-8 text-base font-bold text-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                                Jetzt Registrieren
+                            </Link>
+                        </template>
+                    </div>
                 </div>
+            </section>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-20 w-full text-left">
-                    <!-- Feature 1 -->
-                    <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
-                        <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
-                            <span class="material-symbols-outlined" style="font-size: 24px;">lock</span>
-                        </div>
-                        <h3 class="mb-2 text-base font-bold text-foreground">Authentifizierung</h3>
-                        <p class="text-xs text-muted-foreground leading-relaxed">Sichere Anmeldung mit modernen Standards und Datenschutz.</p>
+            <!-- Features Section -->
+            <section id="features-section" class="min-h-[80vh] flex flex-col items-center justify-center px-6 py-24 bg-card/30 transition-all duration-1000 transform" :class="{'opacity-0 translate-y-20': !featuresVisible, 'opacity-100 translate-y-0': featuresVisible}">
+                <div class="max-w-7xl mx-auto w-full">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4">Alles was du brauchst</h2>
+                        <p class="text-muted-foreground max-w-2xl mx-auto">Unsere Plattform bietet alle Werkzeuge für eine erfolgreiche Ausbildung.</p>
                     </div>
-                    <!-- Feature 2 -->
-                    <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
-                        <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
-                            <span class="material-symbols-outlined" style="font-size: 24px;">forum</span>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full text-left">
+                        <!-- Feature 1 -->
+                        <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
+                            <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">lock</span>
+                            </div>
+                            <h3 class="mb-2 text-base font-bold text-foreground">Authentifizierung</h3>
+                            <p class="text-xs text-muted-foreground leading-relaxed">Sichere Anmeldung mit modernen Standards und Datenschutz.</p>
                         </div>
-                        <h3 class="mb-2 text-base font-bold text-foreground">Forum</h3>
-                        <p class="text-xs text-muted-foreground leading-relaxed">Direkter Austausch und Diskussionen im Team.</p>
-                    </div>
-                    <!-- Feature 3 -->
-                    <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
-                        <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
-                            <span class="material-symbols-outlined" style="font-size: 24px;">calendar_month</span>
+                        <!-- Feature 2 -->
+                        <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
+                            <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">forum</span>
+                            </div>
+                            <h3 class="mb-2 text-base font-bold text-foreground">Forum</h3>
+                            <p class="text-xs text-muted-foreground leading-relaxed">Direkter Austausch und Diskussionen im Team.</p>
                         </div>
-                        <h3 class="mb-2 text-base font-bold text-foreground">Termine</h3>
-                        <p class="text-xs text-muted-foreground leading-relaxed">Wichtige Deadlines und Events immer im Blick behalten.</p>
-                    </div>
-                    <!-- Feature 4 -->
-                    <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
-                        <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
-                            <span class="material-symbols-outlined" style="font-size: 24px;">domain</span>
+                        <!-- Feature 3 -->
+                        <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
+                            <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">calendar_month</span>
+                            </div>
+                            <h3 class="mb-2 text-base font-bold text-foreground">Termine</h3>
+                            <p class="text-xs text-muted-foreground leading-relaxed">Wichtige Deadlines und Events immer im Blick behalten.</p>
                         </div>
-                        <h3 class="mb-2 text-base font-bold text-foreground">Berufsbereiche</h3>
-                        <p class="text-xs text-muted-foreground leading-relaxed">Verwaltung verschiedener Fachrichtungen und Ausbildungszweige.</p>
+                        <!-- Feature 4 -->
+                        <div class="group relative rounded-xl border border-border bg-card p-6 hover:bg-accent/50 hover:border-primary/50 transition-all duration-300">
+                            <div class="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">domain</span>
+                            </div>
+                            <h3 class="mb-2 text-base font-bold text-foreground">Berufsbereiche</h3>
+                            <p class="text-xs text-muted-foreground leading-relaxed">Verwaltung verschiedener Fachrichtungen und Ausbildungszweige.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </main>
 
         <!-- Footer -->
