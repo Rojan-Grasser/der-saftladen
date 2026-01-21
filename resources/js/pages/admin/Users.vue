@@ -4,36 +4,22 @@ import { ref, watch } from 'vue';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 import UserEdit from '@/pages/admin/UserEdit.vue';
 import admin from '@/routes/admin';
-import {
-    type BreadcrumbItem,
-    type PaginatedResponse,
-    type User,
-} from '@/types';
+import { type BreadcrumbItem, type PaginatedResponse, type User, UserStatus } from '@/types';
+
+const statusVariants: Record<
+    UserStatus,
+    'default' | 'destructive' | 'outline'
+> = {
+    active: 'default',
+    inactive: 'destructive',
+    pending: 'outline',
+};
 
 const props = defineProps<{
     users: PaginatedResponse<User>;
@@ -77,19 +63,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Admin Dashboard', href: admin.dashboard().url },
     { title: 'Users', href: admin.users().url },
 ];
-
-const getStatusVariant = (status: string) => {
-    switch (status) {
-        case 'active':
-            return 'default';
-        case 'pending':
-            return 'secondary';
-        case 'inactive':
-            return 'destructive';
-        default:
-            return 'outline';
-    }
-};
 </script>
 
 <template>
@@ -165,7 +138,7 @@ const getStatusVariant = (status: string) => {
                             </TableCell>
                             <TableCell>
                                 <Badge
-                                    :variant="getStatusVariant(user.status)"
+                                    :variant="statusVariants[user.status]"
                                     class="capitalize"
                                 >
                                     {{ user.status }}
