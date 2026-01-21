@@ -24,12 +24,11 @@ class ProfessionalAreaController extends Controller
         ]);
 
         $name = trim($validated['name']);
-        $description = trim($validated['description']);
 
         try {
             ProfessionalArea::create([
                 'name' => $name,
-                'description' => $description,
+                'description' => trim($validated['description']),
             ]);
 
             return ['success' => true];
