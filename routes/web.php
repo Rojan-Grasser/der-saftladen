@@ -30,4 +30,4 @@ Route::middleware(['auth', 'verified', 'active', 'admin'])
         // Add any other admin routes here
     });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
