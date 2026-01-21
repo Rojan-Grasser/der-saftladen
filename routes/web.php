@@ -20,11 +20,11 @@ Route::middleware(['auth', 'verified', 'active', 'admin'])
     ->prefix('admin')
     ->group(function () {
         Route::get('/dashboard', function () {
-            return Inertia::render('AdminDashboard');
+            return Inertia::render('admin/AdminDashboard');
         })->name('admin.dashboard');
 
         Route::get('/users', [UserController::class, 'index'])->name('admin.users');
-        Route::put('/users/{id}', [UserController::class, 'edit'])->name('admin.users.edit');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
         Route::post('/professional-area', [ProfessionalAreaController::class, 'index'])->name('admin.professional-area.create');
         Route::put('/professional-area/{id}', [ProfessionalAreaController::class, 'update'])->name('admin.professional-area.update');
 
