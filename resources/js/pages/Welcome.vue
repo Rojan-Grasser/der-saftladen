@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { Head, Link } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 
@@ -33,7 +32,7 @@ onMounted(() => {
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     </Head>
 
-    <div class="bg-background text-foreground font-sans overflow-x-hidden min-h-screen flex flex-col relative selection:bg-[#ee9d2b] selection:text-white">
+    <div class="bg-background text-foreground font-sans overflow-x-hidden min-h-screen flex flex-col relative selection:bg-primary selection:text-primary-foreground">
         <!-- Background Effects -->
         <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
             <div class="absolute inset-0 bg-dot-pattern opacity-[0.2] mask-corners"></div>
