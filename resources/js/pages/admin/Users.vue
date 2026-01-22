@@ -1,16 +1,10 @@
 <script lang="ts" setup>
 import { Head, router } from '@inertiajs/vue3';
+import { Pencil } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import {
     Pagination,
     PaginationContent,
@@ -19,32 +13,15 @@ import {
     PaginationItem,
     PaginationLast,
     PaginationNext,
-    PaginationPrevious,
+    PaginationPrevious
 } from '@/components/ui/pagination';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import UserEdit from '@/pages/admin/UserEdit.vue';
 import admin from '@/routes/admin';
-import {
-    type BreadcrumbItem,
-    type PaginatedResponse,
-    type User,
-    UserStatus,
-} from '@/types';
+import { type BreadcrumbItem, type PaginatedResponse, type User, UserStatus } from '@/types';
 
 const statusVariants: Record<
     UserStatus,
@@ -66,19 +43,6 @@ const props = defineProps<{
 const roleFilter = ref(props.filters?.role || 'all');
 const statusFilter = ref(props.filters?.status || 'all');
 
-const editingUser = ref<User | null>(null);
-const isEditModalOpen = ref(false);
-
-const openEditModal = (user: User) => {
-    editingUser.value = user;
-    isEditModalOpen.value = true;
-};
-
-const closeEditModal = () => {
-    isEditModalOpen.value = false;
-    editingUser.value = null;
-};
-
 const handlePageChange = (page: number) => {
     router.get(
         admin.users().url,
@@ -93,6 +57,14 @@ const handlePageChange = (page: number) => {
             replace: true,
         },
     );
+};
+
+const isEditOpen = ref(false);
+const editingUser = ref<User | null>(null);
+
+const editUser = (user: User) => {
+    editingUser.value = user;
+    isEditOpen.value = true;
 };
 
 watch([roleFilter, statusFilter], ([newRole, newStatus]) => {
@@ -111,12 +83,12 @@ watch([roleFilter, statusFilter], ([newRole, newStatus]) => {
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Admin Dashboard', href: admin.dashboard().url },
-    { title: 'Users', href: admin.users().url },
+    { title: 'Benutzerverwaltung', href: admin.users().url },
 ];
 </script>
 
 <template>
-    <Head title="User Management" />
+    <Head title="Benutzerverwaltung" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-col gap-6 p-6">
@@ -168,9 +140,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <TableRow>
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
-                            <TableHead>Role</TableHead>
+                            <TableHead>Rolle</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Actions</TableHead>
+                            <TableHead>Aktionen</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -194,14 +166,25 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     {{ user.status }}
                                 </Badge>
                             </TableCell>
-                            <TableCell>
-                                <Button
-                                    class="h-auto p-0"
-                                    variant="link"
-                                    @click="openEditModal(user)"
-                                >
-                                    Edit
-                                </Button>
+                            <TableCell
+                                ><TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger as-child>
+                                            <Button
+                                                aria-label="Bearbeiten"
+                                                size="icon-sm"
+                                                @click="
+                                                    editUser(user)
+                                                "
+                                            >
+                                                <Pencil />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            Bearbeiten
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </TableCell>
                         </TableRow>
                         <TableRow v-if="users.data.length === 0">
@@ -209,7 +192,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 class="h-24 text-center text-muted-foreground"
                                 colspan="5"
                             >
-                                No users found.
+                                Keine Benutzer gefunden.
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -265,20 +248,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </Pagination>
             </div>
         </div>
-        <Dialog :open="isEditModalOpen" @update:open="closeEditModal">
-            <DialogContent class="sm:max-w-106.25">
-                <DialogHeader>
-                    <DialogTitle>Edit User</DialogTitle>
-                    <DialogDescription>
-                        Update the user's profile information and permissions.
-                    </DialogDescription>
-                </DialogHeader>
-                <UserEdit
-                    v-if="editingUser"
-                    :user="editingUser"
-                    @close="closeEditModal"
-                />
-            </DialogContent>
-        </Dialog>
+        <UserEdit
+            v-if="editingUser"
+            v-model:open="isEditOpen"
+            :user="editingUser"
+        />
     </AppLayout>
 </template>
