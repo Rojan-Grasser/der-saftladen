@@ -72,7 +72,6 @@ composer run dev
 
 ### Weitere Befehle
 
-- **Tests:** `composer run test`
 - **Linting/Formatierung:** `composer run lint` / `npm run format`
 - **Build (Production):** `npm run build`
 
