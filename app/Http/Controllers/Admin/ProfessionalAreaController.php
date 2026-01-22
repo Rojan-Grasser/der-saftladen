@@ -99,4 +99,9 @@ class ProfessionalAreaController extends Controller
             ];
         }
     }
+
+    public function getTeachers(Request $request, string $id)
+    {
+        return ProfessionalArea::find($id)->teachers;
+    }
 }
