@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Teacher;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TeacherToProfessionalAreaController extends Controller
 {
@@ -35,5 +37,24 @@ class TeacherToProfessionalAreaController extends Controller
         ]);
 
         return ['success' => true];
+    }
+
+    public function destroy(Request $request, string $teacherId, string $areaId)
+    {
+        try {
+            DB::table('user_to_professional_area')
+                ->where('user_id', '=', $teacherId)
+                ->where('professional_area_id', '=', $areaId)
+                ->delete();
+
+            return ['success' => true];
+        } catch (Exception $exception) {
+            Log::error($exception);
+
+            return [
+                'success' => false,
+                'message' => 'An unexpected error occurred while removing the teacher',
+            ];
+        }
     }
 }
