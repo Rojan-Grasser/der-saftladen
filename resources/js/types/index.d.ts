@@ -42,6 +42,12 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface ProfessionalArea {
+    id: number;
+    name: string;
+    description: string;
+}
+
 export type BreadcrumbItemType = BreadcrumbItem;
 
 export interface PaginatedResponse<T> {
