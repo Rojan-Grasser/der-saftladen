@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ProfessionalAreaController;
+use App\Http\Controllers\Admin\TeacherToProfessionalAreaController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +29,8 @@ Route::middleware(['auth', 'verified', 'active', 'admin'])
         Route::post('/professional-area', [ProfessionalAreaController::class, 'index'])->name('admin.professional-area.create');
         Route::put('/professional-area/{id}', [ProfessionalAreaController::class, 'update'])->name('admin.professional-area.update');
         Route::delete('/professional-area/{id}', [ProfessionalAreaController::class, 'destroy'])->name('admin.professional-area.destroy');
+
+        Route::post('/teacher-to-area/{teacherId}/{areaId}', [TeacherToProfessionalAreaController::class, 'index'])->name('admin.teacher-to-area.add');
 
         // Add any other admin routes here
     });
