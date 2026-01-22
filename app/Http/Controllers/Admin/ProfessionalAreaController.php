@@ -115,4 +115,9 @@ class ProfessionalAreaController extends Controller
 
         return $query->paginate(20, ['id', 'name', 'description'])->withQueryString();
     }
+
+    public function getTeachers(Request $request, string $id)
+    {
+        return ProfessionalArea::findOrFail($id)->teachers;
+    }
 }
