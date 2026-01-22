@@ -16,7 +16,6 @@ class Appointment extends Model
         'location',
         'start_time',
         'end_time',
-        'all_day',
         'user_id',
     ];
 

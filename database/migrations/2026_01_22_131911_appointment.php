@@ -17,9 +17,8 @@ return new class extends Migration
             $table->text('title');
             $table->longText('description')->nullable();
             $table->text('location')->nullable();
-            $table->dateTime('start_time')->nullable();
-            $table->dateTime('end_time')->nullable();
-            $table->boolean('totalDayLong')->nullable();
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
