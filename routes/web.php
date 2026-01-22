@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified', 'active', 'admin'])
         Route::post('/professional-area', [ProfessionalAreaController::class, 'store'])->name('admin.professional-area.store');
         Route::put('/professional-area/{id}', [ProfessionalAreaController::class, 'update'])->name('admin.professional-area.update');
         Route::delete('/professional-area/{id}', [ProfessionalAreaController::class, 'destroy'])->name('admin.professional-area.destroy');
+        Route::get('/professional-area/{id}/teachers', [ProfessionalAreaController::class, 'getTeachers'])->name('admin.professional-area.teachers');
 
         Route::post('/teacher-to-area/{teacherId}/{areaId}', [TeacherToProfessionalAreaController::class, 'index'])->name('admin.teacher-to-area.add');
         Route::delete('/teacher-to-area/{teacherId}/{areaId}', [TeacherToProfessionalAreaController::class, 'destroy'])->name('admin.teacher-to-area.destroy');
