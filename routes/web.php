@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified', 'active', 'admin'])
         Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
         Route::post('/professional-area', [ProfessionalAreaController::class, 'index'])->name('admin.professional-area.create');
         Route::put('/professional-area/{id}', [ProfessionalAreaController::class, 'update'])->name('admin.professional-area.update');
+        Route::delete('/professional-area/{id}', [ProfessionalAreaController::class, 'destroy'])->name('admin.professional-area.destroy');
 
         // Add any other admin routes here
     });

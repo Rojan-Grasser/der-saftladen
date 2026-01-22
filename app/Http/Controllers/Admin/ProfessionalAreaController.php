@@ -7,6 +7,7 @@ use App\Models\ProfessionalArea;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProfessionalAreaController extends Controller
 {
@@ -76,6 +77,25 @@ class ProfessionalAreaController extends Controller
 
             return [
                 'success' => false,
+            ];
+        }
+    }
+
+    /**
+     * Deletes a professional area by its id.
+     */
+    public function destroy(Request $request, string $id)
+    {
+        try {
+            ProfessionalArea::destroy($id);
+
+            return ['success' => true];
+        } catch (\Mockery\Exception $exception) {
+            Log::error($exception);
+
+            return [
+                'success' => false,
+                'message' => 'There was a unexpected error while deleting the professional area, please try again later',
             ];
         }
     }
