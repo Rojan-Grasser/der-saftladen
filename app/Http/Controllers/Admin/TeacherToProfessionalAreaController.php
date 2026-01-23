@@ -13,15 +13,7 @@ class TeacherToProfessionalAreaController extends Controller
 {
     public function index(Request $request, string $teacherId, string $areaId)
     {
-        $teacher = Teacher::find($teacherId);
-
-        // Teacher not found
-        if ($teacher === null) {
-            return [
-                'success' => false,
-                'message' => "Could not find teacher by id $teacherId",
-            ];
-        }
+        $teacher = Teacher::findOrFail($teacherId);
 
         // Teacher already allowed to see professional area
         if ($teacher->professionalAreas()->where('professional_areas.id', $areaId)->exists()) {
