@@ -72,9 +72,10 @@ const submit = () => {
     <Dialog :open="open" @update:open="(v) => (v ? (open = true) : close())">
         <DialogContent class="sm:max-w-106.25">
             <DialogHeader>
-                <DialogTitle>Edit User</DialogTitle>
+                <DialogTitle>Benutzer bearbeiten</DialogTitle>
                 <DialogDescription>
-                    Update the user's profile information and permissions.
+                    Aktualisieren Sie die Benutzerprofilinformationen und
+                    Berechtigungen.
                 </DialogDescription>
             </DialogHeader>
 
@@ -97,18 +98,18 @@ const submit = () => {
 
                 <div class="flex gap-4">
                     <div class="grid flex-1 gap-2">
-                        <Label for="role">Role</Label>
+                        <Label for="role">Rolle</Label>
                         <Select v-model="form.role">
                             <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Select role" />
+                                <SelectValue placeholder="Rolle auswählen" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="admin">Admin</SelectItem>
-                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="user">Benutzer</SelectItem>
                                 <SelectItem value="instructor"
-                                    >Instructor</SelectItem
+                                    >Ausbilder</SelectItem
                                 >
-                                <SelectItem value="teacher">Teacher</SelectItem>
+                                <SelectItem value="teacher">Lehrer</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -117,13 +118,15 @@ const submit = () => {
                         <Label for="status">Status</Label>
                         <Select v-model="form.status">
                             <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Select status" />
+                                <SelectValue placeholder="Status auswählen" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="active">Aktiv</SelectItem>
+                                <SelectItem value="pending"
+                                    >Ausstehend</SelectItem
+                                >
                                 <SelectItem value="inactive"
-                                    >Inactive</SelectItem
+                                    >Inaktiv</SelectItem
                                 >
                             </SelectContent>
                         </Select>

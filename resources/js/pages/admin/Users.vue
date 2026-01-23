@@ -18,19 +18,11 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { roleLabels, statusLabels, statusVariants } from '@/constants/user';
 import AppLayout from '@/layouts/AppLayout.vue';
 import UserEdit from '@/pages/admin/UserEdit.vue';
 import admin from '@/routes/admin';
-import { type BreadcrumbItem, type PaginatedResponse, type User, UserStatus } from '@/types';
-
-const statusVariants: Record<
-    UserStatus,
-    'default' | 'destructive' | 'outline'
-> = {
-    active: 'default',
-    inactive: 'destructive',
-    pending: 'outline',
-};
+import { type BreadcrumbItem, type PaginatedResponse, type User } from '@/types';
 
 const props = defineProps<{
     users: PaginatedResponse<User>;
@@ -96,28 +88,28 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div class="flex items-center gap-3">
                     <Select v-model="roleFilter">
                         <SelectTrigger class="w-40">
-                            <SelectValue placeholder="All Roles" />
+                            <SelectValue placeholder="Alle Rollen" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Roles</SelectItem>
+                            <SelectItem value="all">Alle Rollen</SelectItem>
                             <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="user">User</SelectItem>
+                            <SelectItem value="user">Benutzer</SelectItem>
                             <SelectItem value="instructor"
-                                >Instructor</SelectItem
+                                >Ausbilder</SelectItem
                             >
-                            <SelectItem value="teacher">Teacher</SelectItem>
+                            <SelectItem value="teacher">Lehrer</SelectItem>
                         </SelectContent>
                     </Select>
 
                     <Select v-model="statusFilter">
                         <SelectTrigger class="w-40">
-                            <SelectValue placeholder="All Statuses" />
+                            <SelectValue placeholder="Alle Status" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Statuses</SelectItem>
-                            <SelectItem value="active">Active</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="inactive">Inactive</SelectItem>
+                            <SelectItem value="all">Alle Status</SelectItem>
+                            <SelectItem value="active">Aktiv</SelectItem>
+                            <SelectItem value="pending">Ausstehend</SelectItem>
+                            <SelectItem value="inactive">Inaktiv</SelectItem>
                         </SelectContent>
                     </Select>
 
@@ -129,7 +121,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             statusFilter = 'all';
                         "
                     >
-                        Clear
+                        Leeren
                     </Button>
                 </div>
             </div>
@@ -155,7 +147,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </TableCell>
                             <TableCell>
                                 <Badge class="capitalize" variant="secondary">
-                                    {{ user.role }}
+                                    {{ roleLabels[user.role] }}
                                 </Badge>
                             </TableCell>
                             <TableCell>
@@ -163,7 +155,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     :variant="statusVariants[user.status]"
                                     class="capitalize"
                                 >
-                                    {{ user.status }}
+                                    {{ statusLabels[user.status] }}
                                 </Badge>
                             </TableCell>
                             <TableCell
@@ -173,9 +165,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             <Button
                                                 aria-label="Bearbeiten"
                                                 size="icon-sm"
-                                                @click="
-                                                    editUser(user)
-                                                "
+                                                @click="editUser(user)"
                                             >
                                                 <Pencil />
                                             </Button>
@@ -206,7 +196,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                     v-slot="{ page }"
                     :default-page="users.current_page"
                     :items-per-page="users.per_page"
-                    :sibling-count="1"
                     :total="users.total"
                     @update:page="handlePageChange"
                 >
