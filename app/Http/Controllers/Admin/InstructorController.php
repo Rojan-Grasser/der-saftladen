@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
-use App\Models\Teacher;
+use App\Models\Instructor;
 use DB;
 use Illuminate\Http\Request;
 
-class TeacherController extends Controller
+class InstructorController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +19,7 @@ class TeacherController extends Controller
 
         $query = DB::table('users')
             ->select('id', 'email', 'name')
-            ->where('role', '=', UserRole::TEACHER);
+            ->where('role', '=', UserRole::INSTRUCTOR);
 
         if ($queryString !== '') {
             $query->where(function ($q) use ($queryString) {

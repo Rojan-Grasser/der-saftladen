@@ -3,39 +3,39 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Teacher;
+use App\Models\Instructor;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class TeacherToProfessionalAreaController extends Controller
+class InstructorToProfessionalAreaController extends Controller
 {
-    public function index(Request $request, string $teacherId, string $areaId)
+    public function index(Request $request, string $instructorId, string $areaId)
     {
-        $teacher = Teacher::findOrFail($teacherId);
+        $instructor = Instructor::findOrFail($instructorId);
 
-        // Teacher already allowed to see professional area
-        if ($teacher->professionalAreas()->where('professional_areas.id', $areaId)->exists()) {
+        // Instructor already allowed to see professional area
+        if ($instructor->professionalAreas()->where('professional_areas.id', $areaId)->exists()) {
             return [
                 'success' => false,
-                'message' => 'The teacher already is allowed to see this professional area',
+                'message' => 'The Instructor already is allowed to see this professional area',
             ];
         }
 
         DB::table('user_to_professional_area')->insert([
             'professional_area_id' => $areaId,
-            'user_id' => $teacherId,
+            'user_id' => $instructorId,
         ]);
 
         return ['success' => true];
     }
 
-    public function destroy(Request $request, string $teacherId, string $areaId)
+    public function destroy(Request $request, string $instructorId, string $areaId)
     {
         try {
             DB::table('user_to_professional_area')
-                ->where('user_id', '=', $teacherId)
+                ->where('user_id', '=', $instructorId)
                 ->where('professional_area_id', '=', $areaId)
                 ->delete();
 
@@ -45,7 +45,7 @@ class TeacherToProfessionalAreaController extends Controller
 
             return [
                 'success' => false,
-                'message' => 'An unexpected error occurred while removing the teacher',
+                'message' => 'An unexpected error occurred while removing the instructor',
             ];
         }
     }
