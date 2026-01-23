@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ProfessionalAreaController;
+use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\TeacherToProfessionalAreaController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,7 @@ Route::middleware(['auth', 'verified', 'active', 'admin'])
 
         Route::get('/users', [UserController::class, 'index'])->name('admin.users');
         Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+        Route::get('/teachers', [TeacherController::class, 'index'])->name('admin.teachers');
         Route::get('/professional-areas', [ProfessionalAreaController::class, 'get'])->name('admin.professional-area.get');
         Route::post('/professional-area', [ProfessionalAreaController::class, 'index'])->name('admin.professional-area.create');
         Route::put('/professional-area/{id}', [ProfessionalAreaController::class, 'update'])->name('admin.professional-area.update');
