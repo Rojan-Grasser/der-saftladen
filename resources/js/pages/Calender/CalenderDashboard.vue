@@ -5,7 +5,6 @@ import {
     ChevronLeft,
     ChevronRight,
     Clock,
-    Filter,
     MapPin,
     Plus,
     Search,
@@ -176,6 +175,7 @@ const getDayKeysBetween = (start: Date, end: Date) => {
     }
     return keys;
 };
+
 const filteredAppointments = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
     const now = new Date();
@@ -281,6 +281,7 @@ const weekDays = computed(() => {
     }
     return days;
 });
+
 const selectedDateKey = computed(() => toDateKey(selectedDate.value));
 
 const selectedAppointments = computed(() => {
@@ -528,140 +529,6 @@ const handleDialogOpen = (value: boolean) => {
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader class="pb-2">
-                            <CardTitle
-                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                            >
-                                Filters
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent class="space-y-3 text-xs">
-                            <div
-                                class="flex items-center justify-between gap-2"
-                            >
-                                <Label
-                                    for="filter-mine"
-                                    class="text-xs font-medium"
-                                >
-                                    <Checkbox
-                                        id="filter-mine"
-                                        class="h-3 w-3"
-                                        :checked="showMine"
-                                        @update:checked="
-                                            (value: boolean) =>
-                                                (showMine = value)
-                                        "
-                                    />
-                                    My appointments
-                                </Label>
-                                <Badge variant="outline" class="text-[10px]">
-                                    Mine
-                                </Badge>
-                            </div>
-                            <div
-                                class="flex items-center justify-between gap-2"
-                            >
-                                <Label
-                                    for="filter-team"
-                                    class="text-xs font-medium"
-                                >
-                                    <Checkbox
-                                        id="filter-team"
-                                        class="h-3 w-3"
-                                        :checked="showTeam"
-                                        @update:checked="
-                                            (value: boolean) =>
-                                                (showTeam = value)
-                                        "
-                                    />
-                                    Team
-                                </Label>
-                                <Badge variant="outline" class="text-[10px]">
-                                    Shared
-                                </Badge>
-                            </div>
-                            <div
-                                class="flex items-center justify-between gap-2"
-                            >
-                                <Label
-                                    for="filter-past"
-                                    class="text-xs font-medium"
-                                >
-                                    <Checkbox
-                                        id="filter-past"
-                                        class="h-3 w-3"
-                                        :checked="includePast"
-                                        @update:checked="
-                                            (value: boolean) =>
-                                                (includePast = value)
-                                        "
-                                    />
-                                    Past
-                                </Label>
-                                <Badge variant="outline" class="text-[10px]">
-                                    History
-                                </Badge>
-                            </div>
-                            <Separator class="my-1" />
-                            <div class="space-y-2">
-                                <div
-                                    class="flex items-center justify-between text-[11px] text-muted-foreground"
-                                >
-                                    <span>Calendars</span>
-                                    <Filter class="h-3.5 w-3.5" />
-                                </div>
-                                <div
-                                    class="flex items-center justify-between text-xs"
-                                >
-                                    <div class="flex items-center gap-2">
-                                        <span
-                                            class="h-2 w-2 rounded-full bg-sky-500"
-                                        ></span>
-                                        Personal
-                                    </div>
-                                    <Badge
-                                        variant="outline"
-                                        class="border-sky-200 bg-sky-500/10 text-[10px] text-sky-700"
-                                    >
-                                        Active
-                                    </Badge>
-                                </div>
-                                <div
-                                    class="flex items-center justify-between text-xs"
-                                >
-                                    <div class="flex items-center gap-2">
-                                        <span
-                                            class="h-2 w-2 rounded-full bg-emerald-500"
-                                        ></span>
-                                        Team
-                                    </div>
-                                    <Badge
-                                        variant="outline"
-                                        class="border-emerald-200 bg-emerald-500/10 text-[10px] text-emerald-700"
-                                    >
-                                        Active
-                                    </Badge>
-                                </div>
-                                <div
-                                    class="flex items-center justify-between text-xs"
-                                >
-                                    <div class="flex items-center gap-2">
-                                        <span
-                                            class="h-2 w-2 rounded-full bg-amber-500"
-                                        ></span>
-                                        Resources
-                                    </div>
-                                    <Badge
-                                        variant="outline"
-                                        class="text-[10px]"
-                                    >
-                                        Hidden
-                                    </Badge>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
                 </aside>
                 <section class="flex flex-col gap-4">
                     <div class="rounded-lg border bg-card">
