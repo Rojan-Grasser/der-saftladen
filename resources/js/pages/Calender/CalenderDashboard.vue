@@ -561,12 +561,13 @@ const handleDialogOpen = (value: boolean) => {
                             </div>
                         </CardContent>
                     </Card>
-
                 </aside>
                 <section class="flex flex-col gap-4">
                     <div class="rounded-lg border bg-card">
                         <div
-                            v-if="viewMode !== 'agenda'"
+                            v-if="
+                                viewMode !== 'agenda' && viewMode !== 'day'
+                            "
                             class="grid grid-cols-7 border-b text-xs text-muted-foreground"
                         >
                             <div
@@ -731,7 +732,6 @@ const handleDialogOpen = (value: boolean) => {
                                 </div>
                             </div>
                         </div>
-
 
                         <div v-else-if="viewMode === 'day'" class="p-6">
                             <div class="flex items-center justify-between">
@@ -1042,11 +1042,7 @@ const handleDialogOpen = (value: boolean) => {
             <DialogContent class="sm:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>
-                        {{
-                            isEditMode
-                                ? 'Termin bearbeiten'
-                                : 'Neuer Termin'
-                        }}
+                        {{ isEditMode ? 'Termin bearbeiten' : 'Neuer Termin' }}
                     </DialogTitle>
                     <DialogDescription>
                         {{
