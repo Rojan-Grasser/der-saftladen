@@ -109,7 +109,7 @@ const submit = () => {
 };
 
 const monthLabel = computed(() => {
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat('de-DE', {
         month: 'long',
         year: 'numeric',
     }).format(currentMonth.value);
@@ -408,7 +408,7 @@ const handleDialogOpen = (value: boolean) => {
 </script>
 
 <template>
-    <Head title="Calendar" />
+    <Head title="Kalender" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-col gap-6 p-6">
@@ -421,11 +421,11 @@ const handleDialogOpen = (value: boolean) => {
                         <Input
                             v-model="searchQuery"
                             class="h-9 w-48 pl-9"
-                            placeholder="Search appointments"
+                            placeholder="Termine suchen"
                         />
                     </div>
 
-                    <Button variant="outline" @click="goToday"> Today </Button>
+                    <Button variant="outline" @click="goToday"> Heute </Button>
 
                     <div class="flex items-center rounded-md border bg-card">
                         <Button
@@ -451,7 +451,7 @@ const handleDialogOpen = (value: boolean) => {
 
                     <Select v-model="viewMode">
                         <SelectTrigger class="w-36">
-                            <SelectValue placeholder="View" />
+                            <SelectValue placeholder="Ansicht" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="month">Monat</SelectItem>
@@ -463,7 +463,7 @@ const handleDialogOpen = (value: boolean) => {
 
                     <Button @click="openCreate">
                         <Plus class="h-4 w-4" />
-                        New appointment
+                        Neuer Termin
                     </Button>
                 </div>
             </div>
@@ -474,7 +474,7 @@ const handleDialogOpen = (value: boolean) => {
                             class="flex flex-row items-center justify-between space-y-0 pb-2"
                         >
                             <CardTitle class="text-sm font-medium">
-                                Datum Auswählen
+                                Datum auswählen
                             </CardTitle>
                             <div class="flex items-center gap-1">
                                 <Button
@@ -584,7 +584,7 @@ const handleDialogOpen = (value: boolean) => {
                                             v-if="day.isToday"
                                             class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary"
                                         >
-                                            Today
+                                            Heute
                                         </span>
                                     </div>
                                     <div class="flex flex-col gap-1">
@@ -619,13 +619,13 @@ const handleDialogOpen = (value: boolean) => {
                                             class="text-[11px] text-muted-foreground"
                                         >
                                             +{{ day.appointments.length - 2 }}
-                                            more
+                                            weitere
                                         </span>
                                         <span
                                             v-if="day.appointments.length === 0"
                                             class="text-[11px] text-muted-foreground"
                                         >
-                                            No events
+                                            Keine Termine
                                         </span>
                                     </div>
                                 </div>
@@ -660,7 +660,7 @@ const handleDialogOpen = (value: boolean) => {
                                             v-if="day.isToday"
                                             class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary"
                                         >
-                                            Today
+                                            Heute
                                         </span>
                                     </div>
                                     <div class="flex flex-col gap-1">
@@ -691,7 +691,7 @@ const handleDialogOpen = (value: boolean) => {
                                             v-if="day.appointments.length === 0"
                                             class="text-[11px] text-muted-foreground"
                                         >
-                                            No events
+                                            Keine Termine
                                         </span>
                                     </div>
                                 </div>
@@ -703,7 +703,7 @@ const handleDialogOpen = (value: boolean) => {
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-muted-foreground">
-                                        Day view
+                                        Tagesansicht
                                     </div>
                                     <div class="text-lg font-semibold">
                                         {{ formatDate(selectedDate) }}
@@ -715,7 +715,7 @@ const handleDialogOpen = (value: boolean) => {
                                     @click="openCreate"
                                 >
                                     <Plus class="h-4 w-4" />
-                                    Add
+                                    Hinzufügen
                                 </Button>
                             </div>
                             <Separator class="my-4" />
@@ -736,7 +736,7 @@ const handleDialogOpen = (value: boolean) => {
                                         >
                                             {{
                                                 appointment.description ||
-                                                'No description'
+                                                'Keine Beschreibung'
                                             }}
                                         </div>
                                     </div>
@@ -750,7 +750,7 @@ const handleDialogOpen = (value: boolean) => {
                                     v-if="selectedAppointments.length === 0"
                                     class="rounded-md border border-dashed p-6 text-sm text-muted-foreground"
                                 >
-                                    No appointments for this day.
+                                    Keine Termine für diesen Tag.
                                 </div>
                             </div>
                         </div>
@@ -762,11 +762,11 @@ const handleDialogOpen = (value: boolean) => {
                                         Agenda
                                     </div>
                                     <div class="text-lg font-semibold">
-                                        Upcoming appointments
+                                        Kommende Termine
                                     </div>
                                 </div>
                                 <Badge variant="outline">
-                                    {{ sortedAppointments.length }} total
+                                    {{ sortedAppointments.length }} gesamt
                                 </Badge>
                             </div>
                             <Separator class="my-4" />
@@ -774,7 +774,7 @@ const handleDialogOpen = (value: boolean) => {
                                 v-if="agendaGroups.length === 0"
                                 class="rounded-md border border-dashed p-6 text-sm text-muted-foreground"
                             >
-                                No appointments found.
+                                Keine Termine gefunden.
                             </div>
                             <div v-else class="space-y-4">
                                 <div
@@ -821,7 +821,7 @@ const handleDialogOpen = (value: boolean) => {
                                             >
                                                 {{
                                                     appointment.location ||
-                                                    'No location'
+                                                    'Kein Ort angegeben'
                                                 }}
                                             </div>
                                         </div>
@@ -835,20 +835,20 @@ const handleDialogOpen = (value: boolean) => {
                     <Card>
                         <CardHeader>
                             <CardTitle class="text-sm font-medium">
-                                Selected date
+                                Ausgewähltes Datum
                             </CardTitle>
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="rounded-md border bg-muted/20 p-3">
                                 <div class="text-xs text-muted-foreground">
-                                    Date
+                                    Datum
                                 </div>
                                 <div class="text-sm font-semibold">
                                     {{ formatDate(selectedDate) }}
                                 </div>
                                 <div class="text-xs text-muted-foreground">
                                     {{ selectedAppointments.length }}
-                                    appointment(s)
+                                    Termin(e)
                                 </div>
                             </div>
                             <div class="space-y-2">
@@ -858,7 +858,7 @@ const handleDialogOpen = (value: boolean) => {
                                     @click="openCreate"
                                 >
                                     <Plus class="h-4 w-4" />
-                                    New appointment
+                                    Neuer Termin
                                 </Button>
                                 <Button
                                     variant="ghost"
@@ -866,7 +866,7 @@ const handleDialogOpen = (value: boolean) => {
                                     @click="viewMode = 'day'"
                                 >
                                     <Calendar class="h-4 w-4" />
-                                    Day view
+                                    Tagesansicht
                                 </Button>
                             </div>
                             <Separator />
@@ -874,7 +874,7 @@ const handleDialogOpen = (value: boolean) => {
                                 <div
                                     class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
                                 >
-                                    Appointment details
+                                    Termindetails
                                 </div>
                                 <div
                                     v-if="selectedAppointment"
@@ -904,7 +904,7 @@ const handleDialogOpen = (value: boolean) => {
                                     <div class="text-xs text-muted-foreground">
                                         {{
                                             selectedAppointment.description ||
-                                            'No description added yet.'
+                                            'Noch keine Beschreibung.'
                                         }}
                                     </div>
                                     <div
@@ -928,12 +928,12 @@ const handleDialogOpen = (value: boolean) => {
                                             <MapPin class="h-4 w-4" />
                                             {{
                                                 selectedAppointment.location ||
-                                                'No location'
+                                                'Kein Ort angegeben'
                                             }}
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <User class="h-4 w-4" />
-                                            Owner #{{
+                                            Besitzer #{{
                                                 selectedAppointment.user_id
                                             }}
                                         </div>
@@ -943,7 +943,7 @@ const handleDialogOpen = (value: boolean) => {
                                     v-else
                                     class="rounded-md border border-dashed p-4 text-xs text-muted-foreground"
                                 >
-                                    Select an appointment to see details.
+                                    Termin auswählen, um Details zu sehen.
                                 </div>
                             </div>
                         </CardContent>
@@ -952,7 +952,7 @@ const handleDialogOpen = (value: boolean) => {
                     <Card>
                         <CardHeader>
                             <CardTitle class="text-sm font-medium">
-                                Upcoming
+                                Kommende Termine
                             </CardTitle>
                         </CardHeader>
                         <CardContent class="space-y-3">
@@ -987,7 +987,7 @@ const handleDialogOpen = (value: boolean) => {
                                 v-if="upcomingAppointments.length === 0"
                                 class="rounded-md border border-dashed p-4 text-xs text-muted-foreground"
                             >
-                                No upcoming appointments.
+                                Keine kommenden Termine.
                             </div>
                         </CardContent>
                     </Card>
@@ -997,43 +997,43 @@ const handleDialogOpen = (value: boolean) => {
         <Dialog :open="isCreateOpen" @update:open="handleDialogOpen">
             <DialogContent class="sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>New appointment</DialogTitle>
+                    <DialogTitle>Neuer Termin</DialogTitle>
                     <DialogDescription>
-                        Add a new appointment to the calendar.
+                        Neuen Termin zum Kalender hinzufügen.
                     </DialogDescription>
                 </DialogHeader>
                 <form class="grid gap-4" @submit.prevent="submit">
                     <div class="grid gap-2">
-                        <Label for="title">Title</Label>
+                        <Label for="title">Titel</Label>
                         <Input
                             id="title"
                             v-model="form.title"
-                            placeholder="Appointment title"
+                            placeholder="Termintitel"
                         />
                         <InputError :message="form.errors.title" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="description">Description</Label>
+                        <Label for="description">Beschreibung</Label>
                         <textarea
                             id="description"
                             v-model="form.description"
                             class="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                            placeholder="Add details or notes"
+                            placeholder="Details oder Notizen hinzufügen"
                         ></textarea>
                         <InputError :message="form.errors.description" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="location">Location</Label>
+                        <Label for="location">Ort</Label>
                         <Input
                             id="location"
                             v-model="form.location"
-                            placeholder="Location or meeting link"
+                            placeholder="Ort oder Meeting-Link"
                         />
                         <InputError :message="form.errors.location" />
                     </div>
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="grid gap-2">
-                            <Label for="start_time">Start</Label>
+                            <Label for="start_time">Beginn</Label>
                             <Input
                                 id="start_time"
                                 v-model="form.start_time"
@@ -1042,7 +1042,7 @@ const handleDialogOpen = (value: boolean) => {
                             <InputError :message="form.errors.start_time" />
                         </div>
                         <div class="grid gap-2">
-                            <Label for="end_time">End</Label>
+                            <Label for="end_time">Ende</Label>
                             <Input
                                 id="end_time"
                                 v-model="form.end_time"
@@ -1057,10 +1057,10 @@ const handleDialogOpen = (value: boolean) => {
                             variant="outline"
                             @click="closeCreate"
                         >
-                            Cancel
+                            Abbrechen
                         </Button>
                         <Button type="submit" :disabled="form.processing">
-                            Save appointment
+                            Termin speichern
                         </Button>
                     </DialogFooter>
                 </form>
