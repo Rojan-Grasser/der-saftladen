@@ -533,6 +533,7 @@ const handleDialogOpen = (value: boolean) => {
                 <section class="flex flex-col gap-4">
                     <div class="rounded-lg border bg-card">
                         <div
+                            v-if="viewMode !== 'agenda'"
                             class="grid grid-cols-7 border-b text-xs text-muted-foreground"
                         >
                             <div
