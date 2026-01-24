@@ -1,6 +1,16 @@
-
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3';
+import {
+    Calendar,
+    ChevronLeft,
+    ChevronRight,
+    Clock,
+    Filter,
+    MapPin,
+    Plus,
+    Search,
+    User,
+} from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import InputError from '@/components/InputError.vue';
@@ -18,7 +28,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import {
     Select,
     SelectContent,
@@ -26,20 +35,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/AppLayout.vue';
-import appointments from '@/routes/appointments';
 import { type AppPageProps, type BreadcrumbItem } from '@/types';
-import {
-    Calendar,
-    ChevronLeft,
-    ChevronRight,
-    Clock,
-    Filter,
-    MapPin,
-    Plus,
-    Search,
-    User,
-} from 'lucide-vue-next';
 
 interface Appointment {
     id: number;
@@ -65,7 +63,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const viewMode = ref<'month' | 'week' | 'day' | 'agenda'>('month');
+const viewMode = ref<'Monat' | 'Woche' | 'Tag' | 'Agenda'>('Agenda');
 const searchQuery = ref('');
 const showMine = ref(true);
 const showTeam = ref(true);
@@ -116,7 +114,7 @@ const monthLabel = computed(() => {
     }).format(currentMonth.value);
 });
 
-const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const dayLabels = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 const parseDate = (value: string) => {
     const normalized = value.includes('T') ? value : value.replace(' ', 'T');
     const parsed = new Date(normalized);
@@ -168,7 +166,7 @@ const toDayStart = (value: Date) => {
 
 const getDayKeysBetween = (start: Date, end: Date) => {
     const keys: string[] = [];
-    let cursor = toDayStart(start);
+    const cursor = toDayStart(start);
     const last = toDayStart(end);
     while (cursor <= last) {
         keys.push(toDateKey(cursor));
@@ -298,7 +296,9 @@ const selectedAppointment = computed(() => {
     return selectedAppointments.value[0] ?? null;
 });
 
-const upcomingAppointments = computed(() => sortedAppointments.value.slice(0, 6));
+const upcomingAppointments = computed(() =>
+    sortedAppointments.value.slice(0, 6),
+);
 
 const agendaGroups = computed(() => {
     const groups: {
@@ -423,7 +423,7 @@ const handleDialogOpen = (value: boolean) => {
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="relative">
                         <Search
-                            class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                            class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                         />
                         <Input
                             v-model="searchQuery"
@@ -432,9 +432,7 @@ const handleDialogOpen = (value: boolean) => {
                         />
                     </div>
 
-                    <Button variant="outline" @click="goToday">
-                        Today
-                    </Button>
+                    <Button variant="outline" @click="goToday"> Today </Button>
 
                     <div class="flex items-center rounded-md border bg-card">
                         <Button
@@ -512,7 +510,7 @@ const handleDialogOpen = (value: boolean) => {
                                 <div
                                     v-for="label in dayLabels"
                                     :key="label"
-                                    class="text-center text-[10px] uppercase text-muted-foreground"
+                                    class="text-center text-[10px] text-muted-foreground uppercase"
                                 >
                                     {{ label }}
                                 </div>
@@ -541,13 +539,15 @@ const handleDialogOpen = (value: boolean) => {
                     <Card>
                         <CardHeader class="pb-2">
                             <CardTitle
-                                class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
                             >
                                 Filters
                             </CardTitle>
                         </CardHeader>
                         <CardContent class="space-y-3 text-xs">
-                            <div class="flex items-center justify-between gap-2">
+                            <div
+                                class="flex items-center justify-between gap-2"
+                            >
                                 <Label
                                     for="filter-mine"
                                     class="text-xs font-medium"
@@ -557,19 +557,19 @@ const handleDialogOpen = (value: boolean) => {
                                         class="h-3 w-3"
                                         :checked="showMine"
                                         @update:checked="
-                                            (value) => (showMine = value)
+                                            (value: boolean) =>
+                                                (showMine = value)
                                         "
                                     />
                                     My appointments
                                 </Label>
-                                <Badge
-                                    variant="outline"
-                                    class="text-[10px]"
-                                >
+                                <Badge variant="outline" class="text-[10px]">
                                     Mine
                                 </Badge>
                             </div>
-                            <div class="flex items-center justify-between gap-2">
+                            <div
+                                class="flex items-center justify-between gap-2"
+                            >
                                 <Label
                                     for="filter-team"
                                     class="text-xs font-medium"
@@ -579,19 +579,19 @@ const handleDialogOpen = (value: boolean) => {
                                         class="h-3 w-3"
                                         :checked="showTeam"
                                         @update:checked="
-                                            (value) => (showTeam = value)
+                                            (value: boolean) =>
+                                                (showTeam = value)
                                         "
                                     />
                                     Team
                                 </Label>
-                                <Badge
-                                    variant="outline"
-                                    class="text-[10px]"
-                                >
+                                <Badge variant="outline" class="text-[10px]">
                                     Shared
                                 </Badge>
                             </div>
-                            <div class="flex items-center justify-between gap-2">
+                            <div
+                                class="flex items-center justify-between gap-2"
+                            >
                                 <Label
                                     for="filter-past"
                                     class="text-xs font-medium"
@@ -601,15 +601,13 @@ const handleDialogOpen = (value: boolean) => {
                                         class="h-3 w-3"
                                         :checked="includePast"
                                         @update:checked="
-                                            (value) => (includePast = value)
+                                            (value: boolean) =>
+                                                (includePast = value)
                                         "
                                     />
                                     Past
                                 </Label>
-                                <Badge
-                                    variant="outline"
-                                    class="text-[10px]"
-                                >
+                                <Badge variant="outline" class="text-[10px]">
                                     History
                                 </Badge>
                             </div>
@@ -632,7 +630,7 @@ const handleDialogOpen = (value: boolean) => {
                                     </div>
                                     <Badge
                                         variant="outline"
-                                        class="text-[10px] bg-sky-500/10 text-sky-700 border-sky-200"
+                                        class="border-sky-200 bg-sky-500/10 text-[10px] text-sky-700"
                                     >
                                         Active
                                     </Badge>
@@ -648,7 +646,7 @@ const handleDialogOpen = (value: boolean) => {
                                     </div>
                                     <Badge
                                         variant="outline"
-                                        class="text-[10px] bg-emerald-500/10 text-emerald-700 border-emerald-200"
+                                        class="border-emerald-200 bg-emerald-500/10 text-[10px] text-emerald-700"
                                     >
                                         Active
                                     </Badge>
@@ -662,7 +660,10 @@ const handleDialogOpen = (value: boolean) => {
                                         ></span>
                                         Resources
                                     </div>
-                                    <Badge variant="outline" class="text-[10px]">
+                                    <Badge
+                                        variant="outline"
+                                        class="text-[10px]"
+                                    >
                                         Hidden
                                     </Badge>
                                 </div>
@@ -685,7 +686,7 @@ const handleDialogOpen = (value: boolean) => {
                         </div>
 
                         <div
-                            v-if="viewMode === 'month'"
+                            v-if="viewMode === 'Monat'"
                             class="grid grid-cols-7 gap-px bg-border"
                         >
                             <div
@@ -699,7 +700,9 @@ const handleDialogOpen = (value: boolean) => {
                                         day.isSelected
                                             ? 'border-primary/60 ring-1 ring-primary/20'
                                             : 'border-border/60',
-                                        !day.isCurrentMonth ? 'bg-muted/40' : '',
+                                        !day.isCurrentMonth
+                                            ? 'bg-muted/40'
+                                            : '',
                                     ]"
                                     @click="selectDay(day.date)"
                                 >
@@ -734,9 +737,7 @@ const handleDialogOpen = (value: boolean) => {
                                             :key="appointment.id"
                                             type="button"
                                             class="group flex items-center justify-between gap-2 rounded-md border px-2 py-1 text-left text-[11px] font-medium"
-                                            :class="
-                                                getEventClass(appointment)
-                                            "
+                                            :class="getEventClass(appointment)"
                                             @click.stop="
                                                 selectAppointment(appointment)
                                             "
@@ -758,9 +759,7 @@ const handleDialogOpen = (value: boolean) => {
                                             v-if="day.appointments.length > 2"
                                             class="text-[11px] text-muted-foreground"
                                         >
-                                            +{{
-                                                day.appointments.length - 2
-                                            }}
+                                            +{{ day.appointments.length - 2 }}
                                             more
                                         </span>
                                         <span
@@ -775,7 +774,7 @@ const handleDialogOpen = (value: boolean) => {
                         </div>
 
                         <div
-                            v-else-if="viewMode === 'week'"
+                            v-else-if="viewMode === 'Woche'"
                             class="grid grid-cols-7 gap-px bg-border"
                         >
                             <div
@@ -811,9 +810,7 @@ const handleDialogOpen = (value: boolean) => {
                                             :key="appointment.id"
                                             type="button"
                                             class="flex items-center justify-between gap-2 rounded-md border px-2 py-1 text-left text-[11px] font-medium"
-                                            :class="
-                                                getEventClass(appointment)
-                                            "
+                                            :class="getEventClass(appointment)"
                                             @click.stop="
                                                 selectAppointment(appointment)
                                             "
@@ -841,7 +838,7 @@ const handleDialogOpen = (value: boolean) => {
                                 </div>
                             </div>
                         </div>
-                        <div v-else-if="viewMode === 'day'" class="p-6">
+                        <div v-else-if="viewMode === 'Tag'" class="p-6">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-muted-foreground">
@@ -883,11 +880,7 @@ const handleDialogOpen = (value: boolean) => {
                                         </div>
                                     </div>
                                     <div class="text-xs text-muted-foreground">
-                                        {{
-                                            formatTime(
-                                                appointment.start_time,
-                                            )
-                                        }}
+                                        {{ formatTime(appointment.start_time) }}
                                         -
                                         {{ formatTime(appointment.end_time) }}
                                     </div>
@@ -929,7 +922,7 @@ const handleDialogOpen = (value: boolean) => {
                                     class="space-y-2"
                                 >
                                     <div
-                                        class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                                        class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
                                     >
                                         {{ formatDate(group.date) }}
                                     </div>
@@ -938,9 +931,7 @@ const handleDialogOpen = (value: boolean) => {
                                             v-for="appointment in group.items"
                                             :key="`agenda-item-${appointment.id}`"
                                             class="flex flex-wrap items-center justify-between gap-3 rounded-md border px-3 py-2"
-                                            :class="
-                                                getEventClass(appointment)
-                                            "
+                                            :class="getEventClass(appointment)"
                                             @click="
                                                 selectAppointment(appointment)
                                             "
@@ -1011,7 +1002,7 @@ const handleDialogOpen = (value: boolean) => {
                                 <Button
                                     variant="ghost"
                                     class="w-full"
-                                    @click="viewMode = 'day'"
+                                    @click="viewMode = 'Tag'"
                                 >
                                     <Calendar class="h-4 w-4" />
                                     Day view
@@ -1020,13 +1011,13 @@ const handleDialogOpen = (value: boolean) => {
                             <Separator />
                             <div class="space-y-3">
                                 <div
-                                    class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                                    class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
                                 >
                                     Appointment details
                                 </div>
                                 <div
                                     v-if="selectedAppointment"
-                                    class="rounded-md border p-3 space-y-2"
+                                    class="space-y-2 rounded-md border p-3"
                                 >
                                     <div
                                         class="flex items-start justify-between gap-3"
@@ -1049,9 +1040,7 @@ const handleDialogOpen = (value: boolean) => {
                                             }}
                                         </Badge>
                                     </div>
-                                    <div
-                                        class="text-xs text-muted-foreground"
-                                    >
+                                    <div class="text-xs text-muted-foreground">
                                         {{
                                             selectedAppointment.description ||
                                             'No description added yet.'
@@ -1121,11 +1110,7 @@ const handleDialogOpen = (value: boolean) => {
                                         class="flex items-center gap-1 text-xs text-muted-foreground"
                                     >
                                         <Clock class="h-3.5 w-3.5" />
-                                        {{
-                                            formatTime(
-                                                appointment.start_time,
-                                            )
-                                        }}
+                                        {{ formatTime(appointment.start_time) }}
                                     </div>
                                 </div>
                                 <Badge variant="outline" class="text-[10px]">
