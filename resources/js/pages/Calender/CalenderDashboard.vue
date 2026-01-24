@@ -75,6 +75,8 @@ const selectedDate = ref(new Date());
 const selectedAppointmentId = ref<number | null>(null);
 
 const isCreateOpen = ref(false);
+const isEditMode = ref(false);
+const editingAppointmentId = ref<number | null>(null);
 
 const form = useForm({
     title: '',
@@ -85,20 +87,37 @@ const form = useForm({
 });
 
 const openCreate = () => {
+    isEditMode.value = false;
+    editingAppointmentId.value = null;
     isCreateOpen.value = true;
-    if (!form.start_time) {
-        const now = new Date();
-        form.start_time = toInputDateTime(now);
-        form.end_time = toInputDateTime(addMinutes(now, 60));
-    }
+    form.reset();
+    form.clearErrors();
+    const now = new Date();
+    form.start_time = toInputDateTime(now);
+    form.end_time = toInputDateTime(addMinutes(now, 60));
 };
 
 const closeCreate = () => {
     isCreateOpen.value = false;
+    isEditMode.value = false;
+    editingAppointmentId.value = null;
     form.clearErrors();
 };
 
 const submit = () => {
+    if (isEditMode.value && editingAppointmentId.value != null) {
+        form.put(appointments.update(editingAppointmentId.value).url, {
+            preserveScroll: true,
+            onSuccess: () => {
+                form.reset();
+                isCreateOpen.value = false;
+                isEditMode.value = false;
+                editingAppointmentId.value = null;
+            },
+        });
+        return;
+    }
+
     form.post(appointments.store().url, {
         preserveScroll: true,
         onSuccess: () => {
@@ -142,6 +161,20 @@ const addMinutes = (value: Date, minutes: number) => {
     const next = new Date(value);
     next.setMinutes(next.getMinutes() + minutes);
     return next;
+};
+
+const openEdit = (appointment: Appointment) => {
+    isEditMode.value = true;
+    editingAppointmentId.value = appointment.id;
+    form.clearErrors();
+    form.title = appointment.title ?? '';
+    form.description = appointment.description ?? '';
+    form.location = appointment.location ?? '';
+    const start = parseDate(appointment.start_time);
+    const end = parseDate(appointment.end_time) ?? start;
+    form.start_time = start ? toInputDateTime(start) : '';
+    form.end_time = end ? toInputDateTime(end) : '';
+    isCreateOpen.value = true;
 };
 
 const isSameDay = (a: Date, b: Date) => {
@@ -872,10 +905,20 @@ const handleDialogOpen = (value: boolean) => {
                             </div>
                             <Separator />
                             <div class="space-y-3">
-                                <div
-                                    class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                                >
-                                    Termindetails
+                                <div class="flex items-center justify-between">
+                                    <div
+                                        class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                                    >
+                                        Termindetails
+                                    </div>
+                                    <Button
+                                        v-if="selectedAppointment"
+                                        variant="outline"
+                                        size="sm"
+                                        @click="openEdit(selectedAppointment)"
+                                    >
+                                        Bearbeiten
+                                    </Button>
                                 </div>
                                 <div
                                     v-if="selectedAppointment"
@@ -998,9 +1041,19 @@ const handleDialogOpen = (value: boolean) => {
         <Dialog :open="isCreateOpen" @update:open="handleDialogOpen">
             <DialogContent class="sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Neuer Termin</DialogTitle>
+                    <DialogTitle>
+                        {{
+                            isEditMode
+                                ? 'Termin bearbeiten'
+                                : 'Neuer Termin'
+                        }}
+                    </DialogTitle>
                     <DialogDescription>
-                        Neuen Termin zum Kalender hinzufügen.
+                        {{
+                            isEditMode
+                                ? 'Termin aktualisieren.'
+                                : 'Neuen Termin zum Kalender hinzufügen.'
+                        }}
                     </DialogDescription>
                 </DialogHeader>
                 <form class="grid gap-4" @submit.prevent="submit">
@@ -1061,7 +1114,11 @@ const handleDialogOpen = (value: boolean) => {
                             Abbrechen
                         </Button>
                         <Button type="submit" :disabled="form.processing">
-                            Termin speichern
+                            {{
+                                isEditMode
+                                    ? 'Änderungen speichern'
+                                    : 'Termin speichern'
+                            }}
                         </Button>
                     </DialogFooter>
                 </form>
