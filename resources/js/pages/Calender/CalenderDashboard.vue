@@ -37,6 +37,8 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/AppLayout.vue';
+// eslint-disable-next-line vue/no-dupe-keys
+import appointments from '@/routes/appointments';
 import { type AppPageProps, type BreadcrumbItem } from '@/types';
 
 interface Appointment {
@@ -63,7 +65,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const viewMode = ref<'Monat' | 'Woche' | 'Tag' | 'Agenda'>('Agenda');
+const viewMode = ref<'month' | 'week' | 'day' | 'agenda'>('agenda');
 const searchQuery = ref('');
 const showMine = ref(true);
 const showTeam = ref(true);
@@ -461,9 +463,9 @@ const handleDialogOpen = (value: boolean) => {
                             <SelectValue placeholder="View" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="month">Month</SelectItem>
-                            <SelectItem value="week">Week</SelectItem>
-                            <SelectItem value="day">Day</SelectItem>
+                            <SelectItem value="month">Monat</SelectItem>
+                            <SelectItem value="week">Woche</SelectItem>
+                            <SelectItem value="day">Tag</SelectItem>
                             <SelectItem value="agenda">Agenda</SelectItem>
                         </SelectContent>
                     </Select>
@@ -686,7 +688,7 @@ const handleDialogOpen = (value: boolean) => {
                         </div>
 
                         <div
-                            v-if="viewMode === 'Monat'"
+                            v-if="viewMode === 'month'"
                             class="grid grid-cols-7 gap-px bg-border"
                         >
                             <div
@@ -774,7 +776,7 @@ const handleDialogOpen = (value: boolean) => {
                         </div>
 
                         <div
-                            v-else-if="viewMode === 'Woche'"
+                            v-else-if="viewMode === 'week'"
                             class="grid grid-cols-7 gap-px bg-border"
                         >
                             <div
@@ -838,7 +840,9 @@ const handleDialogOpen = (value: boolean) => {
                                 </div>
                             </div>
                         </div>
-                        <div v-else-if="viewMode === 'Tag'" class="p-6">
+
+
+                        <div v-else-if="viewMode === 'day'" class="p-6">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-muted-foreground">
@@ -1002,7 +1006,7 @@ const handleDialogOpen = (value: boolean) => {
                                 <Button
                                     variant="ghost"
                                     class="w-full"
-                                    @click="viewMode = 'Tag'"
+                                    @click="viewMode = 'day'"
                                 >
                                     <Calendar class="h-4 w-4" />
                                     Day view
