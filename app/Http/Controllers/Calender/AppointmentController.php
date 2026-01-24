@@ -13,7 +13,7 @@ class AppointmentController extends Controller
     public function index()
     {
         return Inertia::render('Calender/CalenderDashboard', [
-            'appointments' => Appointment::all(),
+            'appointments' => Appointment::with('creator:id,name')->get(),
         ]);
     }
 

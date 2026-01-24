@@ -48,6 +48,10 @@ interface Appointment {
     start_time: string;
     end_time: string;
     user_id: number;
+    creator?: {
+        id: number;
+        name: string;
+    } | null;
 }
 
 const props = defineProps<{
@@ -77,6 +81,7 @@ const selectedAppointmentId = ref<number | null>(null);
 const isCreateOpen = ref(false);
 const isEditMode = ref(false);
 const editingAppointmentId = ref<number | null>(null);
+const isDetailsOpen = ref(false);
 
 const form = useForm({
     title: '',
@@ -163,7 +168,11 @@ const addMinutes = (value: Date, minutes: number) => {
     return next;
 };
 
-const truncateWords = (value: string, maxWords = 30) => {
+const getOwnerName = (appointment: Appointment) => {
+    return appointment.creator?.name ?? 'Unbekannt';
+};
+
+const truncateWords = (value: string, maxWords = 100) => {
     const trimmed = value.trim();
     if (!trimmed) {
         return '';
@@ -431,6 +440,19 @@ const selectAppointment = (appointment: Appointment) => {
         selectedDate.value = date;
     }
 };
+
+const openDetails = (appointment: Appointment) => {
+    selectAppointment(appointment);
+    isDetailsOpen.value = true;
+};
+
+const openEditFromDetails = () => {
+    if (!selectedAppointment.value) {
+        return;
+    }
+    isDetailsOpen.value = false;
+    openEdit(selectedAppointment.value);
+};
 const eventColorClasses = [
     'bg-sky-500/10 text-sky-700 border-sky-200 dark:border-sky-500/40 dark:text-sky-300',
     'bg-emerald-500/10 text-emerald-700 border-emerald-200 dark:border-emerald-500/40 dark:text-emerald-300',
@@ -645,7 +667,7 @@ const handleDialogOpen = (value: boolean) => {
                                             class="group flex items-center justify-between gap-2 rounded-md border px-2 py-1 text-left text-[11px] font-medium"
                                             :class="getEventClass(appointment)"
                                             @click.stop="
-                                                selectAppointment(appointment)
+                                                openDetails(appointment)
                                             "
                                         >
                                             <span class="truncate">
@@ -718,7 +740,7 @@ const handleDialogOpen = (value: boolean) => {
                                             class="flex items-center justify-between gap-2 rounded-md border px-2 py-1 text-left text-[11px] font-medium"
                                             :class="getEventClass(appointment)"
                                             @click.stop="
-                                                selectAppointment(appointment)
+                                                openDetails(appointment)
                                             "
                                         >
                                             <span class="truncate">
@@ -771,7 +793,7 @@ const handleDialogOpen = (value: boolean) => {
                                     :key="`day-${appointment.id}`"
                                     class="flex items-start justify-between gap-4 rounded-md border p-3"
                                     :class="getEventClass(appointment)"
-                                    @click="selectAppointment(appointment)"
+                                    @click="openDetails(appointment)"
                                 >
                                     <div>
                                         <div class="text-sm font-semibold">
@@ -840,7 +862,7 @@ const handleDialogOpen = (value: boolean) => {
                                             class="flex flex-wrap items-center justify-between gap-3 rounded-md border px-3 py-2"
                                             :class="getEventClass(appointment)"
                                             @click="
-                                                selectAppointment(appointment)
+                                                openDetails(appointment)
                                             "
                                         >
                                             <div
@@ -962,7 +984,6 @@ const handleDialogOpen = (value: boolean) => {
                                             selectedAppointment.description
                                                 ? truncateWords(
                                                       selectedAppointment.description,
-                                                      30,
                                                   )
                                                 : 'Noch keine Beschreibung.'
                                         }}
@@ -993,9 +1014,8 @@ const handleDialogOpen = (value: boolean) => {
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <User class="h-4 w-4" />
-                                            Besitzer #{{
-                                                selectedAppointment.user_id
-                                            }}
+                                            Besitzer
+                                            {{ getOwnerName(selectedAppointment) }}
                                         </div>
                                     </div>
                                 </div>
@@ -1021,7 +1041,7 @@ const handleDialogOpen = (value: boolean) => {
                                 :key="`upcoming-${appointment.id}`"
                                 class="flex items-start justify-between gap-3 rounded-md border p-3 text-sm"
                                 :class="getEventClass(appointment)"
-                                @click="selectAppointment(appointment)"
+                                @click="openDetails(appointment)"
                             >
                                 <div class="space-y-1">
                                     <div class="font-semibold">
@@ -1054,6 +1074,111 @@ const handleDialogOpen = (value: boolean) => {
                 </aside>
             </div>
         </div>
+        <Dialog :open="isDetailsOpen" @update:open="isDetailsOpen = $event">
+            <DialogContent class="sm:max-w-xl">
+                <DialogHeader>
+                    <DialogTitle>
+                        {{
+                            selectedAppointment
+                                ? selectedAppointment.title
+                                : 'Termin'
+                        }}
+                    </DialogTitle>
+                    <DialogDescription>Termindetails</DialogDescription>
+                </DialogHeader>
+                <div v-if="selectedAppointment" class="space-y-4">
+                    <div class="grid gap-3 text-sm">
+                        <div class="flex items-start justify-between gap-4">
+                            <span
+                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                            >
+                                Datum
+                            </span>
+                            <div class="text-right font-medium">
+                                {{
+                                    formatDate(
+                                        parseDate(
+                                            selectedAppointment.start_time,
+                                        ) || new Date(),
+                                    )
+                                }}
+                            </div>
+                        </div>
+                        <div class="flex items-start justify-between gap-4">
+                            <span
+                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                            >
+                                Uhrzeit
+                            </span>
+                            <div class="text-right font-medium">
+                                {{
+                                    formatTime(
+                                        selectedAppointment.start_time,
+                                    )
+                                }}
+                                -
+                                {{ formatTime(selectedAppointment.end_time) }}
+                            </div>
+                        </div>
+                        <div class="flex items-start justify-between gap-4">
+                            <span
+                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                            >
+                                Ort
+                            </span>
+                            <div class="text-right font-medium">
+                                {{
+                                    selectedAppointment.location ||
+                                    'Kein Ort angegeben'
+                                }}
+                            </div>
+                        </div>
+                        <div class="flex items-start justify-between gap-4">
+                            <span
+                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                            >
+                                Besitzer
+                            </span>
+                            <div class="text-right font-medium">
+                                {{ getOwnerName(selectedAppointment) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div
+                            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                        >
+                            Beschreibung
+                        </div>
+                        <p class="mt-2 whitespace-pre-wrap text-sm">
+                            {{
+                                selectedAppointment.description ||
+                                'Keine Beschreibung.'
+                            }}
+                        </p>
+                    </div>
+                </div>
+                <div v-else class="text-sm text-muted-foreground">
+                    Kein Termin ausgewählt.
+                </div>
+                <DialogFooter class="gap-2">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        @click="isDetailsOpen = false"
+                    >
+                        Schließen
+                    </Button>
+                    <Button
+                        v-if="selectedAppointment"
+                        type="button"
+                        @click="openEditFromDetails"
+                    >
+                        Bearbeiten
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
         <Dialog :open="isCreateOpen" @update:open="handleDialogOpen">
             <DialogContent class="sm:max-w-2xl">
                 <DialogHeader>
