@@ -1,22 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import {
-    Calendar,
-    ChevronLeft,
-    ChevronRight,
-    Clock,
-    MapPin,
-    Plus,
-    Search,
-    User,
-} from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
+
 import InputError from '@/components/InputError.vue';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -27,32 +15,17 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/AppLayout.vue';
 // eslint-disable-next-line vue/no-dupe-keys
 import appointments from '@/routes/appointments';
 import { type AppPageProps, type BreadcrumbItem } from '@/types';
 
-interface Appointment {
-    id: number;
-    title: string;
-    description?: string | null;
-    location?: string | null;
-    start_time: string;
-    end_time: string;
-    user_id: number;
-    creator?: {
-        id: number;
-        name: string;
-    } | null;
-}
+import AppointmentDetailsDialog from './components/AppointmentDetailsDialog.vue';
+import CalendarToolbar from './components/CalendarToolbar.vue';
+import CalendarViews from './components/CalendarViews.vue';
+import DetailsSidebar from './components/DetailsSidebar.vue';
+import MiniCalendarCard from './components/MiniCalendarCard.vue';
+import type { Appointment, ViewMode } from './types';
 
 const props = defineProps<{
     appointments: Appointment[];
@@ -68,7 +41,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const viewMode = ref<'month' | 'week' | 'day' | 'agenda'>('agenda');
+const viewMode = ref<ViewMode>('agenda');
 const searchQuery = ref('');
 const showMine = ref(true);
 const showTeam = ref(true);
@@ -426,6 +399,10 @@ const goToday = () => {
     selectedDate.value = now;
 };
 
+const setViewMode = (mode: ViewMode) => {
+    viewMode.value = mode;
+};
+
 const selectDay = (date: Date) => {
     selectedDate.value = date;
     const key = toDateKey(date);
@@ -479,706 +456,72 @@ const handleDialogOpen = (value: boolean) => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-col gap-6 p-6">
-            <div class="flex flex-wrap items-center justify-end gap-4">
-                <div class="flex flex-wrap items-center gap-3">
-                    <div class="relative">
-                        <Search
-                            class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-                        />
-                        <Input
-                            v-model="searchQuery"
-                            class="h-9 w-48 pl-9"
-                            placeholder="Termine suchen"
-                        />
-                    </div>
-
-                    <Button variant="outline" @click="goToday"> Heute </Button>
-
-                    <div class="flex items-center rounded-md border bg-card">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="h-9 w-9"
-                            @click="goPrevMonth"
-                        >
-                            <ChevronLeft class="h-4 w-4" />
-                        </Button>
-                        <span class="px-3 text-sm font-medium">
-                            {{ monthLabel }}
-                        </span>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="h-9 w-9"
-                            @click="goNextMonth"
-                        >
-                            <ChevronRight class="h-4 w-4" />
-                        </Button>
-                    </div>
-
-                    <Select v-model="viewMode">
-                        <SelectTrigger class="w-36">
-                            <SelectValue placeholder="Ansicht" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="month">Monat</SelectItem>
-                            <SelectItem value="week">Woche</SelectItem>
-                            <SelectItem value="day">Tag</SelectItem>
-                            <SelectItem value="agenda">Agenda</SelectItem>
-                        </SelectContent>
-                    </Select>
-
-                    <Button @click="openCreate">
-                        <Plus class="h-4 w-4" />
-                        Neuer Termin
-                    </Button>
-                </div>
-            </div>
+            <CalendarToolbar
+                v-model:searchQuery="searchQuery"
+                v-model:viewMode="viewMode"
+                :month-label="monthLabel"
+                @today="goToday"
+                @prev-month="goPrevMonth"
+                @next-month="goNextMonth"
+                @create="openCreate"
+            />
             <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)_320px]">
                 <aside class="flex flex-col gap-6">
-                    <Card>
-                        <CardHeader
-                            class="flex flex-row items-center justify-between space-y-0 pb-2"
-                        >
-                            <CardTitle class="text-sm font-medium">
-                                Datum auswählen
-                            </CardTitle>
-                            <div class="flex items-center gap-1">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    class="h-7 w-7"
-                                    @click="goPrevMonth"
-                                >
-                                    <ChevronLeft class="h-4 w-4" />
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    class="h-7 w-7"
-                                    @click="goNextMonth"
-                                >
-                                    <ChevronRight class="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent class="space-y-2">
-                            <div class="text-xs text-muted-foreground">
-                                {{ monthLabel }}
-                            </div>
-                            <div class="grid grid-cols-7 gap-1 text-xs">
-                                <div
-                                    v-for="label in dayLabels"
-                                    :key="label"
-                                    class="text-center text-[10px] text-muted-foreground uppercase"
-                                >
-                                    {{ label }}
-                                </div>
-                                <button
-                                    v-for="day in calendarDays"
-                                    :key="`mini-${day.key}`"
-                                    type="button"
-                                    class="h-7 w-full rounded-md text-xs transition-colors"
-                                    :class="[
-                                        day.isSelected
-                                            ? 'bg-primary text-primary-foreground'
-                                            : day.isToday
-                                              ? 'bg-primary/10 text-primary'
-                                              : day.isCurrentMonth
-                                                ? 'hover:bg-muted'
-                                                : 'text-muted-foreground/60 hover:bg-muted/40',
-                                    ]"
-                                    @click="selectDay(day.date)"
-                                >
-                                    {{ day.date.getDate() }}
-                                </button>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <MiniCalendarCard
+                        :month-label="monthLabel"
+                        :day-labels="dayLabels"
+                        :calendar-days="calendarDays"
+                        @select-day="selectDay"
+                        @prev-month="goPrevMonth"
+                        @next-month="goNextMonth"
+                    />
                 </aside>
                 <section class="flex flex-col gap-4">
-                    <div class="rounded-lg border bg-card">
-                        <div
-                            v-if="
-                                viewMode !== 'agenda' && viewMode !== 'day'
-                            "
-                            class="grid grid-cols-7 border-b text-xs text-muted-foreground"
-                        >
-                            <div
-                                v-for="label in dayLabels"
-                                :key="label"
-                                class="px-2 py-3 text-center font-medium"
-                            >
-                                {{ label }}
-                            </div>
-                        </div>
-
-                        <div
-                            v-if="viewMode === 'month'"
-                            class="grid grid-cols-7 gap-px bg-border"
-                        >
-                            <div
-                                v-for="day in calendarDays"
-                                :key="day.key"
-                                class="bg-card p-2"
-                            >
-                                <div
-                                    class="flex min-h-[120px] flex-col gap-2 rounded-md border p-2 transition hover:border-primary/40"
-                                    :class="[
-                                        day.isSelected
-                                            ? 'border-primary/60 ring-1 ring-primary/20'
-                                            : 'border-border/60',
-                                        !day.isCurrentMonth
-                                            ? 'bg-muted/40'
-                                            : '',
-                                    ]"
-                                    @click="selectDay(day.date)"
-                                >
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
-                                        <span
-                                            class="text-xs font-semibold"
-                                            :class="
-                                                day.isToday
-                                                    ? 'text-primary'
-                                                    : day.isCurrentMonth
-                                                      ? 'text-foreground'
-                                                      : 'text-muted-foreground'
-                                            "
-                                        >
-                                            {{ day.date.getDate() }}
-                                        </span>
-                                        <span
-                                            v-if="day.isToday"
-                                            class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary"
-                                        >
-                                            Heute
-                                        </span>
-                                    </div>
-                                    <div class="flex flex-col gap-1">
-                                        <button
-                                            v-for="appointment in day.appointments.slice(
-                                                0,
-                                                2,
-                                            )"
-                                            :key="appointment.id"
-                                            type="button"
-                                            class="group flex items-center justify-between gap-2 rounded-md border px-2 py-1 text-left text-[11px] font-medium"
-                                            :class="getEventClass(appointment)"
-                                            @click.stop="
-                                                openDetails(appointment)
-                                            "
-                                        >
-                                            <span class="truncate">
-                                                {{ appointment.title }}
-                                            </span>
-                                            <span
-                                                class="text-[10px] font-normal opacity-70"
-                                            >
-                                                {{
-                                                    formatTime(
-                                                        appointment.start_time,
-                                                    )
-                                                }}
-                                            </span>
-                                        </button>
-                                        <span
-                                            v-if="day.appointments.length > 2"
-                                            class="text-[11px] text-muted-foreground"
-                                        >
-                                            +{{ day.appointments.length - 2 }}
-                                            weitere
-                                        </span>
-                                        <span
-                                            v-if="day.appointments.length === 0"
-                                            class="text-[11px] text-muted-foreground"
-                                        >
-                                            Keine Termine
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            v-else-if="viewMode === 'week'"
-                            class="grid grid-cols-7 gap-px bg-border"
-                        >
-                            <div
-                                v-for="day in weekDays"
-                                :key="`week-${day.key}`"
-                                class="bg-card p-3"
-                            >
-                                <div
-                                    class="flex flex-col gap-2 rounded-md border p-2"
-                                    :class="
-                                        day.isSelected
-                                            ? 'border-primary/60 ring-1 ring-primary/20'
-                                            : 'border-border/60'
-                                    "
-                                    @click="selectDay(day.date)"
-                                >
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
-                                        <span class="text-xs font-semibold">
-                                            {{ formatDate(day.date) }}
-                                        </span>
-                                        <span
-                                            v-if="day.isToday"
-                                            class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary"
-                                        >
-                                            Heute
-                                        </span>
-                                    </div>
-                                    <div class="flex flex-col gap-1">
-                                        <button
-                                            v-for="appointment in day.appointments"
-                                            :key="appointment.id"
-                                            type="button"
-                                            class="flex items-center justify-between gap-2 rounded-md border px-2 py-1 text-left text-[11px] font-medium"
-                                            :class="getEventClass(appointment)"
-                                            @click.stop="
-                                                openDetails(appointment)
-                                            "
-                                        >
-                                            <span class="truncate">
-                                                {{ appointment.title }}
-                                            </span>
-                                            <span
-                                                class="text-[10px] font-normal opacity-70"
-                                            >
-                                                {{
-                                                    formatTime(
-                                                        appointment.start_time,
-                                                    )
-                                                }}
-                                            </span>
-                                        </button>
-                                        <span
-                                            v-if="day.appointments.length === 0"
-                                            class="text-[11px] text-muted-foreground"
-                                        >
-                                            Keine Termine
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-else-if="viewMode === 'day'" class="p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <div class="text-sm text-muted-foreground">
-                                        Tagesansicht
-                                    </div>
-                                    <div class="text-lg font-semibold">
-                                        {{ formatDate(selectedDate) }}
-                                    </div>
-                                </div>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    @click="openCreate"
-                                >
-                                    <Plus class="h-4 w-4" />
-                                    Hinzufügen
-                                </Button>
-                            </div>
-                            <Separator class="my-4" />
-                            <div class="space-y-3">
-                                <div
-                                    v-for="appointment in selectedAppointments"
-                                    :key="`day-${appointment.id}`"
-                                    class="flex items-start justify-between gap-4 rounded-md border p-3"
-                                    :class="getEventClass(appointment)"
-                                    @click="openDetails(appointment)"
-                                >
-                                    <div>
-                                        <div class="text-sm font-semibold">
-                                            {{ appointment.title }}
-                                        </div>
-                                        <div
-                                            class="text-xs text-muted-foreground"
-                                        >
-                                            {{
-                                                appointment.description ||
-                                                'Keine Beschreibung'
-                                            }}
-                                        </div>
-                                    </div>
-                                    <div class="text-xs text-muted-foreground">
-                                        {{ formatTime(appointment.start_time) }}
-                                        -
-                                        {{ formatTime(appointment.end_time) }}
-                                    </div>
-                                </div>
-                                <div
-                                    v-if="selectedAppointments.length === 0"
-                                    class="rounded-md border border-dashed p-6 text-sm text-muted-foreground"
-                                >
-                                    Keine Termine für diesen Tag.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-else class="p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <div class="text-sm text-muted-foreground">
-                                        Agenda
-                                    </div>
-                                    <div class="text-lg font-semibold">
-                                        Kommende Termine
-                                    </div>
-                                </div>
-                                <Badge variant="outline">
-                                    {{ sortedAppointments.length }} gesamt
-                                </Badge>
-                            </div>
-                            <Separator class="my-4" />
-                            <div
-                                v-if="agendaGroups.length === 0"
-                                class="rounded-md border border-dashed p-6 text-sm text-muted-foreground"
-                            >
-                                Keine Termine gefunden.
-                            </div>
-                            <div v-else class="space-y-4">
-                                <div
-                                    v-for="group in agendaGroups"
-                                    :key="`agenda-${group.key}`"
-                                    class="space-y-2"
-                                >
-                                    <div
-                                        class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                                    >
-                                        {{ formatDate(group.date) }}
-                                    </div>
-                                    <div class="grid gap-2">
-                                        <div
-                                            v-for="appointment in group.items"
-                                            :key="`agenda-item-${appointment.id}`"
-                                            class="flex flex-wrap items-center justify-between gap-3 rounded-md border px-3 py-2"
-                                            :class="getEventClass(appointment)"
-                                            @click="
-                                                openDetails(appointment)
-                                            "
-                                        >
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <span
-                                                    class="text-sm font-semibold"
-                                                >
-                                                    {{ appointment.title }}
-                                                </span>
-                                                <Badge
-                                                    variant="outline"
-                                                    class="text-[10px]"
-                                                >
-                                                    {{
-                                                        formatTime(
-                                                            appointment.start_time,
-                                                        )
-                                                    }}
-                                                </Badge>
-                                            </div>
-                                            <div
-                                                class="text-xs text-muted-foreground"
-                                            >
-                                                {{
-                                                    appointment.location ||
-                                                    'Kein Ort angegeben'
-                                                }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <CalendarViews
+                        :view-mode="viewMode"
+                        :day-labels="dayLabels"
+                        :calendar-days="calendarDays"
+                        :week-days="weekDays"
+                        :selected-date="selectedDate"
+                        :selected-appointments="selectedAppointments"
+                        :agenda-groups="agendaGroups"
+                        :sorted-appointments-count="sortedAppointments.length"
+                        :format-date="formatDate"
+                        :format-time="formatTime"
+                        :get-event-class="getEventClass"
+                        @select-day="selectDay"
+                        @open-details="openDetails"
+                        @open-create="openCreate"
+                    />
                 </section>
-                <aside class="flex flex-col gap-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle class="text-sm font-medium">
-                                Ausgewähltes Datum
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent class="space-y-4">
-                            <div class="rounded-md border bg-muted/20 p-3">
-                                <div class="text-xs text-muted-foreground">
-                                    Datum
-                                </div>
-                                <div class="text-sm font-semibold">
-                                    {{ formatDate(selectedDate) }}
-                                </div>
-                                <div class="text-xs text-muted-foreground">
-                                    {{ selectedAppointments.length }}
-                                    Termin(e)
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <Button
-                                    variant="outline"
-                                    class="w-full"
-                                    @click="openCreate"
-                                >
-                                    <Plus class="h-4 w-4" />
-                                    Neuer Termin
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    class="w-full"
-                                    @click="viewMode = 'day'"
-                                >
-                                    <Calendar class="h-4 w-4" />
-                                    Tagesansicht
-                                </Button>
-                            </div>
-                            <Separator />
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between">
-                                    <div
-                                        class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                                    >
-                                        Termindetails
-                                    </div>
-                                    <Button
-                                        v-if="selectedAppointment"
-                                        variant="outline"
-                                        size="sm"
-                                        @click="openEdit(selectedAppointment)"
-                                    >
-                                        Bearbeiten
-                                    </Button>
-                                </div>
-                                <div
-                                    v-if="selectedAppointment"
-                                    class="space-y-2 rounded-md border p-3"
-                                >
-                                    <div
-                                        class="flex items-start justify-between gap-3"
-                                    >
-                                        <div class="text-sm font-semibold">
-                                            {{ selectedAppointment.title }}
-                                        </div>
-                                        <Badge
-                                            variant="outline"
-                                            :class="
-                                                getEventClass(
-                                                    selectedAppointment,
-                                                )
-                                            "
-                                        >
-                                            {{
-                                                formatTime(
-                                                    selectedAppointment.start_time,
-                                                )
-                                            }}
-                                        </Badge>
-                                    </div>
-                                    <div class="text-xs text-muted-foreground">
-                                        {{
-                                            selectedAppointment.description
-                                                ? truncateWords(
-                                                      selectedAppointment.description,
-                                                  )
-                                                : 'Noch keine Beschreibung.'
-                                        }}
-                                    </div>
-                                    <div
-                                        class="flex flex-col gap-2 text-xs text-muted-foreground"
-                                    >
-                                        <div class="flex items-center gap-2">
-                                            <Clock class="h-4 w-4" />
-                                            {{
-                                                formatTime(
-                                                    selectedAppointment.start_time,
-                                                )
-                                            }}
-                                            -
-                                            {{
-                                                formatTime(
-                                                    selectedAppointment.end_time,
-                                                )
-                                            }}
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <MapPin class="h-4 w-4" />
-                                            {{
-                                                selectedAppointment.location ||
-                                                'Kein Ort angegeben'
-                                            }}
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <User class="h-4 w-4" />
-                                            Besitzer
-                                            {{ getOwnerName(selectedAppointment) }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    v-else
-                                    class="rounded-md border border-dashed p-4 text-xs text-muted-foreground"
-                                >
-                                    Termin auswählen, um Details zu sehen.
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle class="text-sm font-medium">
-                                Kommende Termine
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent class="space-y-3">
-                            <div
-                                v-for="appointment in upcomingAppointments"
-                                :key="`upcoming-${appointment.id}`"
-                                class="flex items-start justify-between gap-3 rounded-md border p-3 text-sm"
-                                :class="getEventClass(appointment)"
-                                @click="openDetails(appointment)"
-                            >
-                                <div class="space-y-1">
-                                    <div class="font-semibold">
-                                        {{ appointment.title }}
-                                    </div>
-                                    <div
-                                        class="flex items-center gap-1 text-xs text-muted-foreground"
-                                    >
-                                        <Clock class="h-3.5 w-3.5" />
-                                        {{ formatTime(appointment.start_time) }}
-                                    </div>
-                                </div>
-                                <Badge variant="outline" class="text-[10px]">
-                                    {{
-                                        formatDate(
-                                            parseDate(appointment.start_time) ||
-                                                new Date(),
-                                        )
-                                    }}
-                                </Badge>
-                            </div>
-                            <div
-                                v-if="upcomingAppointments.length === 0"
-                                class="rounded-md border border-dashed p-4 text-xs text-muted-foreground"
-                            >
-                                Keine kommenden Termine.
-                            </div>
-                        </CardContent>
-                    </Card>
-                </aside>
+                <DetailsSidebar
+                    :selected-date="selectedDate"
+                    :selected-appointments="selectedAppointments"
+                    :selected-appointment="selectedAppointment"
+                    :upcoming-appointments="upcomingAppointments"
+                    :format-date="formatDate"
+                    :format-time="formatTime"
+                    :parse-date="parseDate"
+                    :get-event-class="getEventClass"
+                    :truncate-words="truncateWords"
+                    :get-owner-name="getOwnerName"
+                    @open-create="openCreate"
+                    @open-edit="openEdit"
+                    @open-details="openDetails"
+                    @set-view-mode="setViewMode"
+                />
             </div>
         </div>
-        <Dialog :open="isDetailsOpen" @update:open="isDetailsOpen = $event">
-            <DialogContent class="sm:max-w-xl">
-                <DialogHeader>
-                    <DialogTitle>
-                        {{
-                            selectedAppointment
-                                ? selectedAppointment.title
-                                : 'Termin'
-                        }}
-                    </DialogTitle>
-                    <DialogDescription>Termindetails</DialogDescription>
-                </DialogHeader>
-                <div v-if="selectedAppointment" class="space-y-4">
-                    <div class="grid gap-3 text-sm">
-                        <div class="flex items-start justify-between gap-4">
-                            <span
-                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                            >
-                                Datum
-                            </span>
-                            <div class="text-right font-medium">
-                                {{
-                                    formatDate(
-                                        parseDate(
-                                            selectedAppointment.start_time,
-                                        ) || new Date(),
-                                    )
-                                }}
-                            </div>
-                        </div>
-                        <div class="flex items-start justify-between gap-4">
-                            <span
-                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                            >
-                                Uhrzeit
-                            </span>
-                            <div class="text-right font-medium">
-                                {{
-                                    formatTime(
-                                        selectedAppointment.start_time,
-                                    )
-                                }}
-                                -
-                                {{ formatTime(selectedAppointment.end_time) }}
-                            </div>
-                        </div>
-                        <div class="flex items-start justify-between gap-4">
-                            <span
-                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                            >
-                                Ort
-                            </span>
-                            <div class="text-right font-medium">
-                                {{
-                                    selectedAppointment.location ||
-                                    'Kein Ort angegeben'
-                                }}
-                            </div>
-                        </div>
-                        <div class="flex items-start justify-between gap-4">
-                            <span
-                                class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                            >
-                                Besitzer
-                            </span>
-                            <div class="text-right font-medium">
-                                {{ getOwnerName(selectedAppointment) }}
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div
-                            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
-                            Beschreibung
-                        </div>
-                        <p class="mt-2 whitespace-pre-wrap text-sm">
-                            {{
-                                selectedAppointment.description ||
-                                'Keine Beschreibung.'
-                            }}
-                        </p>
-                    </div>
-                </div>
-                <div v-else class="text-sm text-muted-foreground">
-                    Kein Termin ausgewählt.
-                </div>
-                <DialogFooter class="gap-2">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        @click="isDetailsOpen = false"
-                    >
-                        Schließen
-                    </Button>
-                    <Button
-                        v-if="selectedAppointment"
-                        type="button"
-                        @click="openEditFromDetails"
-                    >
-                        Bearbeiten
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <AppointmentDetailsDialog
+            :open="isDetailsOpen"
+            :appointment="selectedAppointment"
+            :format-date="formatDate"
+            :format-time="formatTime"
+            :parse-date="parseDate"
+            :get-owner-name="getOwnerName"
+            @update:open="isDetailsOpen = $event"
+            @edit="openEditFromDetails"
+        />
         <Dialog :open="isCreateOpen" @update:open="handleDialogOpen">
             <DialogContent class="sm:max-w-2xl">
                 <DialogHeader>
