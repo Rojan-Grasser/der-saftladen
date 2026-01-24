@@ -12,7 +12,7 @@ class AppointmentController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Calender/Index', [
+        return Inertia::render('Calender/CalenderDashboard', [
             'appointments' => Appointment::all(),
         ]);
     }
