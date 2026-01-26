@@ -22,7 +22,7 @@ class HandleRequestLogging
 
         $duration = microtime(true) - $start;
 
-        Log::info('Incoming request', [
+        Log::info('HTTP request', [
             'method' => $request->getMethod(),
             'uri' => $request->getPathInfo(),
             'full_url' => $request->fullUrl(),
