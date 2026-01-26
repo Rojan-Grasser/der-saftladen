@@ -207,7 +207,7 @@ const submit = () => {
                 </DialogDescription>
             </DialogHeader>
 
-            <form class="space-y-4" @submit.prevent="submit">
+            <form class="space-y-4">
                 <div class="grid gap-2">
                     <Label for="name">Name</Label>
                     <Input id="name" v-model="form.name" />
@@ -259,7 +259,7 @@ const submit = () => {
                     >
                         Abbrechen
                     </Button>
-                    <Button :disabled="form.processing" type="submit">
+                    <Button :disabled="form.processing" @click="submit">
                         Speichern
                     </Button>
                 </div>

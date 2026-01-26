@@ -1,18 +1,8 @@
 <script lang="ts" setup>
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { Pencil, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,6 +31,7 @@ import {
 } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ProfessionalAreaCreate from '@/pages/admin/ProfessionalAreaCreate.vue';
+import ProfessionalAreaDeleteAlert from '@/pages/admin/ProfessionalAreaDeleteAlert.vue';
 import ProfessionalAreaEdit from '@/pages/admin/ProfessionalAreaEdit.vue';
 import admin from '@/routes/admin';
 import type {
@@ -71,28 +62,12 @@ const editProfessionalArea = (professionalArea: ProfessionalArea) => {
     isEditOpen.value = true;
 };
 
-const deleteForm = useForm({});
 const isDeleteOpen = ref(false);
-const deleteCandidate = ref<ProfessionalArea | null>(null);
+const deletingProfessionalArea = ref<ProfessionalArea | null>(null);
 
 const askDeleteProfessionalArea = (professionalArea: ProfessionalArea) => {
-    deleteCandidate.value = professionalArea;
+    deletingProfessionalArea.value = professionalArea;
     isDeleteOpen.value = true;
-};
-
-const confirmDeleteProfessionalArea = () => {
-    if (!deleteCandidate.value) return;
-
-    deleteForm.delete(
-        admin.professionalArea.destroy(deleteCandidate.value.id).url,
-        {
-            preserveScroll: true,
-            onFinish: () => {
-                isDeleteOpen.value = false;
-                deleteCandidate.value = null;
-            },
-        },
-    );
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -174,9 +149,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                 aria-label="Löschen"
                                                 size="icon-sm"
                                                 variant="destructive"
-                                                :disabled="
-                                                    deleteForm.processing
-                                                "
                                                 @click="
                                                     askDeleteProfessionalArea(
                                                         professionalArea,
@@ -258,47 +230,10 @@ const breadcrumbs: BreadcrumbItem[] = [
             v-model:open="isEditOpen"
             :professionalArea="editingProfessionalArea"
         />
-        <AlertDialog
-            :open="isDeleteOpen"
-            @update:open="(v: boolean) => (isDeleteOpen = v)"
-        >
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Berufsbereich löschen?</AlertDialogTitle>
-                    <AlertDialogDescription class="space-y-1">
-                        <p>
-                            Dieser Vorgang kann nicht rückgängig gemacht werden.
-                        </p>
-
-                        <div
-                            class="flex flex-wrap items-baseline gap-x-1 gap-y-1"
-                        >
-                            <span class="shrink-0">Möchten Sie</span>
-
-                            <span
-                                class="font-medium break-all"
-                                :title="deleteCandidate?.name ?? ''"
-                            >
-                                {{ deleteCandidate?.name }}
-                            </span>
-
-                            <span class="shrink-0">wirklich löschen?</span>
-                        </div>
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-
-                <AlertDialogFooter>
-                    <AlertDialogCancel :disabled="deleteForm.processing">
-                        Abbrechen
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                        :disabled="deleteForm.processing"
-                        @click="confirmDeleteProfessionalArea"
-                    >
-                        Löschen
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+        <ProfessionalAreaDeleteAlert
+            v-if="deletingProfessionalArea"
+            v-model:open="isDeleteOpen"
+            :professionalArea="deletingProfessionalArea"
+        />
     </AppLayout>
 </template>
