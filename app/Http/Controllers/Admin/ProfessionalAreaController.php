@@ -13,13 +13,28 @@ use \Illuminate\Http\Response;
 
 class ProfessionalAreaController extends Controller
 {
+    public function index(Request $request)
+    {
+        $validated = $request->validate([
+            'query' => ['sometimes', 'string', 'max:255'],
+        ]);
+
+        $query = DB::table('professional_areas');
+
+        if (isset($validated['query'])) {
+            $query->where('name', 'like', '%' . $validated['query'] . '%');
+        }
+
+        return $query->paginate(20, ['id', 'name', 'description'])->withQueryString();
+    }
+
     /**
-     * Takes name and description as parameters, returns success (always) and message (sometimes).
+     * Takes name and description as parameters
      *
      * @param Request $request
      * @return Response
      */
-    public function index(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => ['required'],
@@ -90,21 +105,6 @@ class ProfessionalAreaController extends Controller
                 'message' => 'There was a unexpected error while deleting the professional area, please try again later',
             ];
         }
-    }
-
-    public function get(Request $request)
-    {
-        $validated = $request->validate([
-            'query' => ['sometimes', 'string', 'max:255'],
-        ]);
-
-        $query = DB::table('professional_areas');
-
-        if (isset($validated['query'])) {
-            $query->where('name', 'like', '%' . $validated['query'] . '%');
-        }
-
-        return $query->paginate(20, ['id', 'name', 'description'])->withQueryString();
     }
 
     public function getInstructors(Request $request, string $id)

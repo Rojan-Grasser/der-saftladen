@@ -29,7 +29,7 @@ Route::middleware(['auth', 'verified', 'active', 'admin'])
         Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
         Route::get('/instructors', [InstructorController::class, 'index'])->name('admin.instructors');
         Route::get('/professional-areas', [ProfessionalAreaController::class, 'get'])->name('admin.professional-area.get');
-        Route::post('/professional-area', [ProfessionalAreaController::class, 'index'])->name('admin.professional-area.create');
+        Route::post('/professional-area', [ProfessionalAreaController::class, 'store'])->name('admin.professional-area.create');
         Route::put('/professional-area/{id}', [ProfessionalAreaController::class, 'update'])->name('admin.professional-area.update');
         Route::delete('/professional-area/{id}', [ProfessionalAreaController::class, 'destroy'])->name('admin.professional-area.destroy');
         Route::get('/professional-area/{id}/instructors', [ProfessionalAreaController::class, 'getInstructors'])->name('admin.professional-area.instructors');

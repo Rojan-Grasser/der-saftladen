@@ -76,7 +76,7 @@ class UserController extends Controller
             'email' => ['sometimes', 'email', 'max:255'],
         ]);
 
-        User::query()->where('id', $id)->update($validated);
+        User::find($id)->update($validated);
 
         return back()->with('success', 'User updated successfully');
     }
