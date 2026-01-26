@@ -14,6 +14,7 @@ import type { Appointment } from '../types';
 defineProps<{
     open: boolean;
     appointment: Appointment | null;
+    isDeleting?: boolean;
     formatDate: (value: Date) => string;
     formatTime: (value: string) => string;
     parseDate: (value: string) => Date | null;
@@ -23,6 +24,7 @@ defineProps<{
 const emit = defineEmits<{
     (e: 'update:open', value: boolean): void;
     (e: 'edit'): void;
+    (e: 'delete'): void;
 }>();
 </script>
 
@@ -111,6 +113,15 @@ const emit = defineEmits<{
                     @click="emit('update:open', false)"
                 >
                     Schließen
+                </Button>
+                <Button
+                    v-if="appointment"
+                    type="button"
+                    variant="destructive"
+                    :disabled="isDeleting"
+                    @click="emit('delete')"
+                >
+                    {{ isDeleting ? 'Löschen...' : 'Löschen' }}
                 </Button>
                 <Button
                     v-if="appointment"

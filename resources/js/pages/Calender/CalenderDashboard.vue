@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 
@@ -64,6 +64,7 @@ const form = useForm({
     start_time: '',
     end_time: '',
 });
+const deleteForm = useForm({});
 const isAllDay = ref(false);
 const allDayStart = ref('');
 const allDayEnd = ref('');
@@ -383,6 +384,28 @@ const selectedAppointment = computed(() => {
     return selectedAppointments.value[0] ?? null;
 });
 
+const deleteSelectedAppointment = () => {
+    const appointment = selectedAppointment.value;
+    if (!appointment || deleteForm.processing) {
+        return;
+    }
+
+    if (!confirm('Termin wirklich löschen?')) {
+        return;
+    }
+
+    deleteForm.delete(appointments.destroy(appointment.id).url, {
+        preserveScroll: true,
+        onSuccess: () => {
+            if (selectedAppointmentId.value === appointment.id) {
+                selectedAppointmentId.value = null;
+            }
+            isDetailsOpen.value = false;
+            router.reload({ only: ['appointments'] });
+        },
+    });
+};
+
 const upcomingAppointments = computed(() =>
     sortedAppointments.value.slice(0, 6),
 );
@@ -596,12 +619,14 @@ watch([allDayStart, allDayEnd], () => {
         <AppointmentDetailsDialog
             :open="isDetailsOpen"
             :appointment="selectedAppointment"
+            :is-deleting="deleteForm.processing"
             :format-date="formatDate"
             :format-time="formatTime"
             :parse-date="parseDate"
             :get-owner-name="getOwnerName"
             @update:open="isDetailsOpen = $event"
             @edit="openEditFromDetails"
+            @delete="deleteSelectedAppointment"
         />
         <Dialog :open="isCreateOpen" @update:open="handleDialogOpen">
             <DialogContent class="sm:max-w-2xl">
