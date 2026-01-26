@@ -42,10 +42,17 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Instructor {
+    id: number;
+    name: string;
+    email: string;
+}
+
 export interface ProfessionalArea {
     id: number;
     name: string;
     description: string;
+    instructors: User[] | null;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
