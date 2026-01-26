@@ -5,4 +5,4 @@ set -e
 php artisan migrate --force
 
 # Start Octane
-rr serve -c /var/www/html/.rr.yaml
+php artisan octane:start --host=0.0.0.0 --port=9000 --server=roadrunner
