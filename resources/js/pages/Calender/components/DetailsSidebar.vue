@@ -14,8 +14,8 @@ defineProps<{
     selectedAppointment: Appointment | null;
     upcomingAppointments: Appointment[];
     formatDate: (value: Date) => string;
-    formatTime: (value: string) => string;
-    parseDate: (value: string) => Date | null;
+    formatTime: (value: string | number) => string;
+    parseDate: (value: string | number) => Date | null;
     getEventClass: (appointment: Appointment) => string;
     truncateWords: (value: string, maxWords?: number) => string;
     getOwnerName: (appointment: Appointment) => string;

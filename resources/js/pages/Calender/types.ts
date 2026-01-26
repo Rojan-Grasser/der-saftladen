@@ -5,8 +5,8 @@ export interface Appointment {
     title: string;
     description?: string | null;
     location?: string | null;
-    start_time: string;
-    end_time: string;
+    start_time: number | string;
+    end_time: number | string;
     user_id: number;
     creator?: {
         id: number;

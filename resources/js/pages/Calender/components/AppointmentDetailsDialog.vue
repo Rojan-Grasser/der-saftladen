@@ -16,8 +16,8 @@ defineProps<{
     appointment: Appointment | null;
     isDeleting?: boolean;
     formatDate: (value: Date) => string;
-    formatTime: (value: string) => string;
-    parseDate: (value: string) => Date | null;
+    formatTime: (value: string | number) => string;
+    parseDate: (value: string | number) => Date | null;
     getOwnerName: (appointment: Appointment) => string;
 }>();
 

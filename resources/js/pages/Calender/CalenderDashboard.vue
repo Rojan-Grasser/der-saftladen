@@ -125,11 +125,46 @@ const monthLabel = computed(() => {
 });
 
 const dayLabels = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-const parseDate = (value: string) => {
-    const normalized = value.includes('T') ? value : value.replace(' ', 'T');
+const parseDate = (value: string | number | null | undefined) => {
+    if (value === null || value === undefined || value === '') {
+        return null;
+    }
+
+    if (typeof value === 'number') {
+        const milliseconds = value > 9999999999 ? value : value * 1000;
+        const parsed = new Date(milliseconds);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return null;
+    }
+
+    if (/^\d+$/.test(trimmed)) {
+        const asNumber = Number(trimmed);
+        const milliseconds = asNumber > 9999999999 ? asNumber : asNumber * 1000;
+        const parsed = new Date(milliseconds);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    const normalized = trimmed.includes('T')
+        ? trimmed
+        : trimmed.replace(' ', 'T');
     const parsed = new Date(normalized);
     return Number.isNaN(parsed.getTime()) ? null : parsed;
 };
+
+const toUnixSeconds = (value: string | number) => {
+    const parsed = parseDate(value);
+    return parsed ? Math.floor(parsed.getTime() / 1000) : null;
+};
+
+form.transform((data) => ({
+    ...data,
+    start_time: toUnixSeconds(data.start_time),
+    end_time: toUnixSeconds(data.end_time),
+}));
 
 const toDateKey = (value: Date) => {
     return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(
@@ -154,14 +189,12 @@ const toInputDate = (value: Date) => {
     )}-${String(value.getDate()).padStart(2, '0')}`;
 };
 
-const toDateString = (value: string) => {
-    if (!value) {
+const toDateString = (value: string | number) => {
+    if (value === null || value === undefined || value === '') {
         return '';
     }
-    if (value.includes('T')) {
-        return value.split('T')[0];
-    }
-    return value.split(' ')[0] ?? '';
+    const parsed = parseDate(value);
+    return parsed ? toInputDate(parsed) : '';
 };
 
 const addMinutes = (value: Date, minutes: number) => {
@@ -438,7 +471,7 @@ const agendaGroups = computed(() => {
     return groups;
 });
 
-const formatTime = (value: string) => {
+const formatTime = (value: string | number) => {
     const date = parseDate(value);
     if (!date) {
         return '';

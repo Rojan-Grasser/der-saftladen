@@ -17,7 +17,7 @@ defineProps<{
     agendaGroups: AgendaGroup[];
     sortedAppointmentsCount: number;
     formatDate: (value: Date) => string;
-    formatTime: (value: string) => string;
+    formatTime: (value: string | number) => string;
     getEventClass: (appointment: Appointment) => string;
 }>();
 
