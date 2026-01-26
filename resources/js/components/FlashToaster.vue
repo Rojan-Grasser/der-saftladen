@@ -16,9 +16,6 @@ type FlashPageProps = AppPageProps & {
 
 const page = usePage<FlashPageProps>();
 
-let lastSuccess: string | null = null;
-let lastError: string | null = null;
-
 watch(
     () =>
         [
@@ -26,14 +23,12 @@ watch(
             page.props.flash?.error ?? null,
         ] as const,
     ([success, error]) => {
-        if (success && success !== lastSuccess) {
+        if (success) {
             toast.success(success);
-            lastSuccess = success;
         }
 
-        if (error && error !== lastError) {
+        if (error) {
             toast.error(error);
-            lastError = error;
         }
     },
     { immediate: false },
