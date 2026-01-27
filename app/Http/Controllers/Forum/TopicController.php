@@ -39,8 +39,8 @@ class TopicController extends Controller
         ]);
 
         $query = $request->user()->hasRole(UserRole::INSTRUCTOR) ?
-            $this->getManyForInstructor(auth()->id()) :
-            $this->getManyForTeacher();
+            $this->getQueryForInstructor(auth()->id()) :
+            $this->getQueryForTeacher();
 
         $limit = $validated['limit'] ?? 15;
 
