@@ -17,7 +17,7 @@ class PostController extends Controller
      */
     public function index(string $topicId)
     {
-        return Topic::findOrFail($topicId)->posts()->paginate(10);
+        return Topic::findOrFail($topicId)->posts()->paginate(25);
     }
 
     /**

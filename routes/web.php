@@ -49,12 +49,9 @@ Route::middleware(['auth', 'verified', 'active'])
         Route::middleware([EnsureInstructorHasAccess::class])
             ->prefix('topics/{topicId}')
             ->group(function () {
-                Route::get('test', [PostController::class, 'store']);
-
                 Route::resource('posts', PostController::class);
             });
 
-        Route::get('test', [TopicController::class, 'store']);
         Route::resource('topics', TopicController::class);
     });
 
