@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -10,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 
 import type { Appointment } from '../types';
+import AppoitmentDeleteAlert from '@/pages/calender/components/AppoitmentDeleteAlert.vue';
 
 defineProps<{
     open: boolean;
@@ -26,6 +29,8 @@ const emit = defineEmits<{
     (e: 'edit'): void;
     (e: 'delete'): void;
 }>();
+
+const showDeleteAlert = ref(false);
 </script>
 
 <template>
@@ -119,9 +124,9 @@ const emit = defineEmits<{
                     type="button"
                     variant="destructive"
                     :disabled="isDeleting"
-                    @click="emit('delete')"
+                    @click="showDeleteAlert = true"
                 >
-                    {{ isDeleting ? 'Löschen...' : 'Löschen' }}
+                    Löschen
                 </Button>
                 <Button
                     v-if="appointment"
@@ -131,6 +136,13 @@ const emit = defineEmits<{
                     Bearbeiten
                 </Button>
             </DialogFooter>
+
+            <AppoitmentDeleteAlert
+                v-if="appointment"
+                v-model:open="showDeleteAlert"
+                :appointment="appointment"
+                @deleted="emit('update:open', false)"
+            />
         </DialogContent>
     </Dialog>
 </template>
