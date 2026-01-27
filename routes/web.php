@@ -20,13 +20,13 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['request-logging', 'auth', 'verified', 'active'])->name('dashboard');
 
-Route::middleware(['request-logging', 'auth', 'verified', 'active', 'admin'])
+
 
 Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::resource('appointments', AppointmentController::class)->except(['create', 'edit', 'show']);
 });
 
-Route::middleware(['auth', 'verified', 'active', 'admin'])
+Route::middleware(['request-logging', 'auth', 'verified', 'active', 'admin'])
     ->prefix('admin')
     ->group(function () {
         Route::get('/dashboard', function () {
