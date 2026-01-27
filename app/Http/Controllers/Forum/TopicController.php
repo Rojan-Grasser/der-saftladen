@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Forum;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Topic;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class TopicController extends Controller
@@ -52,7 +51,7 @@ class TopicController extends Controller
      */
     public function create()
     {
-        //
+        return response()->setStatusCode(501);
     }
 
     /**
@@ -96,7 +95,7 @@ class TopicController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return response()->setStatusCode(501);
     }
 
     /**
