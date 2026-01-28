@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, Calendar, Folder, LayoutGrid } from 'lucide-vue-next';
 
+import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -27,6 +28,11 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Kalender',
+        href: '/appointments',
+        icon: Calendar,
     },
 ];
 if (user.role === 'admin') {

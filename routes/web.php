@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\InstructorToProfessionalAreaController;
 use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\Admin\ProfessionalAreaController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Calender\AppointmentController;
 use App\Http\Controllers\Forum\TopicController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,6 +19,12 @@ Route::get('/', function () {
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['request-logging', 'auth', 'verified', 'active'])->name('dashboard');
+
+
+
+Route::middleware(['auth', 'verified', 'active'])->group(function () {
+    Route::resource('appointments', AppointmentController::class)->except(['create', 'edit', 'show']);
+});
 
 Route::middleware(['request-logging', 'auth', 'verified', 'active', 'admin'])
     ->prefix('admin')
