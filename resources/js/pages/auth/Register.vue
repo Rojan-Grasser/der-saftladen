@@ -61,10 +61,10 @@ import { store } from '@/routes/register';
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="role">Role</Label>
-                    <Select name="role">
-                        <SelectTrigger id="role" :tabindex="3" class="w-full">
-                            <SelectValue placeholder="Wählen Sie eine Rolle aus" />
+                    <Label for="roles">Role</Label>
+                    <Select multiple name="roles">
+                        <SelectTrigger id="roles" :tabindex="3" class="w-full">
+                            <SelectValue placeholder="Wählen Sie Rollen aus" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="teacher"> Lehrer </SelectItem>
@@ -74,7 +74,7 @@ import { store } from '@/routes/register';
                             <SelectItem value="admin"> Admin </SelectItem>
                         </SelectContent>
                     </Select>
-                    <InputError :message="errors.role" />
+                    <InputError :message="errors.roles" />
                 </div>
 
                 <div class="grid gap-2">
@@ -91,7 +91,9 @@ import { store } from '@/routes/register';
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Passwort bestätigen</Label>
+                    <Label for="password_confirmation"
+                        >Passwort bestätigen</Label
+                    >
                     <Input
                         id="password_confirmation"
                         type="password"

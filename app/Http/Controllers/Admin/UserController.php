@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\UserRole;
+use App\Enums\Role;
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $validated = $request->validate([
-            'role' => ['sometimes', new Enum(UserRole::class)],
+            'role' => ['sometimes', new Enum(Role::class)],
             'status' => ['sometimes', new Enum(UserStatus::class)],
         ]);
 
@@ -70,7 +70,7 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'role' => ['sometimes', new Enum(UserRole::class)],
+            'role' => ['sometimes', new Enum(Role::class)],
             'status' => ['sometimes', new Enum(UserStatus::class)],
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', 'max:255'],
