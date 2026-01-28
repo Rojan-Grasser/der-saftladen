@@ -13,18 +13,13 @@ class EnsureInstructorHasAccess
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $topicId = $request->route('topicId');
 
-        $instructor = Instructor::find($request->user()->id);
-
-        if (
-            $instructor &&
-            !$instructor->hasAccess(Topic::findOrFail($topicId)->professional_area_id)
-        ) {
+        if (!Instructor::findOrFail($request->user()->id)->hasAccess(Topic::findOrFail($topicId)->professional_area_id)) {
             return back()->with('error', 'Du hast keinen zugriff auf dieses Thema');
         }
 
