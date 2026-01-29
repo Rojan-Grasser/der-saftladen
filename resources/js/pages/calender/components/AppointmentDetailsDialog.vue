@@ -10,9 +10,10 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import AppoitmentDeleteAlert from '@/pages/calender/components/AppoitmentDeleteAlert.vue';
 
 import type { Appointment } from '../types';
-import AppoitmentDeleteAlert from '@/pages/calender/components/AppoitmentDeleteAlert.vue';
+
 
 defineProps<{
     open: boolean;

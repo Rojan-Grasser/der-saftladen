@@ -92,6 +92,8 @@ class AppointmentController extends Controller
             ...$validated,
             'user_id' => Auth::id(),
         ]);
+
+        return back()->with('success', 'Termin erfolgreich erstellt!');
     }
 
     public function update(Request $request, Appointment $appointment)
@@ -99,10 +101,14 @@ class AppointmentController extends Controller
         $validated = $this->validateAppointment($request);
 
         $appointment->update($validated);
+
+        return back()->with('success', 'Termin erfolgreich aktualisiert!');
     }
 
     public function destroy(Appointment $appointment)
     {
         $appointment->delete();
+
+        return back()->with('success', 'Termin erfolgreich gelöscht!');
     }
 }
