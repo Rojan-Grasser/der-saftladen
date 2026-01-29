@@ -186,7 +186,7 @@ export const useAppointmentForm = () => {
         if (isAllDay.value || !value) {
             return;
         }
-        if (!endDate.value) {
+        if (endDate.value !== value) {
             endDate.value = value;
         }
     });
