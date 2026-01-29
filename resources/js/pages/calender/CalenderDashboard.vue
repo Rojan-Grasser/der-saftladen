@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -41,7 +41,6 @@ const selectedDate = ref(new Date());
 const selectedAppointmentId = ref<number | null>(null);
 
 const isDetailsOpen = ref(false);
-const deleteForm = useForm({});
 
 const {
     form,
@@ -241,7 +240,6 @@ const getEventClass = (appointment: Appointment) => {
         <AppointmentDetailsDialog
             :open="isDetailsOpen"
             :appointment="selectedAppointment"
-            :is-deleting="deleteForm.processing"
             :format-date="formatDate"
             :format-time="formatTime"
             :parse-date="parseDate"

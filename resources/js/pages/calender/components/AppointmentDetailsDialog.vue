@@ -18,7 +18,6 @@ import type { Appointment } from '../types';
 const props = defineProps<{
     open: boolean;
     appointment: Appointment | null;
-    isDeleting?: boolean;
     formatDate: (value: Date) => string;
     formatTime: (value: string | number) => string;
     parseDate: (value: string | number) => Date | null;
@@ -140,7 +139,6 @@ const handleDeleted = () => {
                     v-if="appointment"
                     type="button"
                     variant="destructive"
-                    :disabled="isDeleting"
                     @click="showDeleteAlert = true"
                 >
                     Löschen
