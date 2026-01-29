@@ -34,7 +34,7 @@ service:
   targetPort: {{ .Port }}
 
 virtualService:
-  enabled: true
+  enabled: false
   spec:
     gateways:
       - {{ .Gateway }}
