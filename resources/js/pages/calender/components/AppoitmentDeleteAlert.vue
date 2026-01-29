@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 
 import {
     AlertDialog,
@@ -32,7 +32,6 @@ const submit = () => {
         onSuccess: () => {
             emit('deleted');
             close();
-            router.reload({ only: ['appointments'] });
         },
     });
 };

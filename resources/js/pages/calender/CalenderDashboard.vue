@@ -160,9 +160,7 @@ const openEditFromDetails = () => {
 };
 
 const handleAppointmentDeleted = () => {
-    if (selectedAppointmentId.value) {
-        selectedAppointmentId.value = null;
-    }
+    selectedAppointmentId.value = null;
     isDetailsOpen.value = false;
 };
 

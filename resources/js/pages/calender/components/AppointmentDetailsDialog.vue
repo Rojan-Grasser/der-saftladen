@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +15,7 @@ import AppoitmentDeleteAlert from '@/pages/calender/components/AppoitmentDeleteA
 import type { Appointment } from '../types';
 
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
     appointment: Appointment | null;
     isDeleting?: boolean;
@@ -32,6 +32,16 @@ const emit = defineEmits<{
 }>();
 
 const showDeleteAlert = ref(false);
+
+watch(
+    () => props.appointment,
+    (value) => {
+        if (!value && props.open) {
+            showDeleteAlert.value = false;
+            emit('update:open', false);
+        }
+    },
+);
 
 const handleDeleted = () => {
     showDeleteAlert.value = false;
