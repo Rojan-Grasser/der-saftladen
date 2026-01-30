@@ -20,6 +20,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'role' => ['sometimes', new Enum(UserRole::class)],
             'status' => ['sometimes', new Enum(UserStatus::class)],
+            'search' => ['sometimes', 'string', 'max:255'],
         ]);
 
         $query = User::query();
@@ -32,13 +33,25 @@ class UserController extends Controller
             $query->where('status', $validated['status']);
         }
 
+        if (!empty($validated['search'])) {
+            $search = $validated['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->select('id', 'name', 'email', 'role', 'status')
+            ->orderBy('name')
+            ->paginate(20)
+            ->withQueryString();
+
         return Inertia::render('admin/Users', [
-            'users' => $query->select('id', 'name', 'email', 'role', 'status')
-                ->paginate(20)
-                ->withQueryString(),
-            'filters' => $request->only(['role', 'status']),
+            'users' => $users,
+            'filters' => $request->only(['role', 'status', 'search']),
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -89,3 +102,4 @@ class UserController extends Controller
         //
     }
 }
+
