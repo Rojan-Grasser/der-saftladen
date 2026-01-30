@@ -5,18 +5,23 @@ export type User = {
     role: string;
 };
 
+export type Post = {
+    id: number;
+    content: string;
+    created_at: string;
+    updated_at: string;
+    reaction: 'like' | 'dislike' | null;
+    likesCount: number;
+    dislikesCount: number;
+    user: User;
+}
+
 export type Topic = {
     id: number;
     title: string;
     description: string;
     isOwnPost: boolean;
     owner: User;
-    posts: Array<{
-        id: number;
-        content: string;
-        created_at: string;
-        updated_at: string;
-        user: User;
-    }>;
+    posts: Array<Post>;
     createdAt: string;
 };

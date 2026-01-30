@@ -21,6 +21,8 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: show.url({ topic: topic.id }),
     },
 ];
+
+console.log(JSON.parse(JSON.stringify(topic)));
 </script>
 
 <template>

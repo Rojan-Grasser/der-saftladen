@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Forum;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Instructor;
+use App\Models\PostReaction;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -92,9 +93,25 @@ class TopicController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        $topic = Topic::with(['posts' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }, 'posts.creator'])->findOrFail($id);
+        $currentUserId = $request->user()->id;
+
+        $topic = Topic::with([
+            'posts' => function ($query) {
+                $query->orderBy('created_at', 'desc')
+                    ->withCount([
+                        'reactions as likes_count' => function ($query) {
+                            $query->where('type', 'like');
+                        },
+                        'reactions as dislikes_count' => function ($query) {
+                            $query->where('type', 'dislike');
+                        },
+                    ]);
+            },
+            'posts.creator',
+            'posts.reactions' => function ($query) use ($currentUserId) {
+                $query->where('user_id', $currentUserId);
+            },
+        ])->findOrFail($id);
 
         if (
             $request->user()->hasRole(UserRole::INSTRUCTOR) &&
@@ -124,6 +141,9 @@ class TopicController extends Controller
                     'content' => $post->content,
                     'created_at' => $post->created_at,
                     'updated_at' => $post->updated_at,
+                    'reaction' => $post->reactions->first()?->type,
+                    'likesCount' => $post->likes_count,
+                    'dislikesCount' => $post->dislikes_count,
                     'user' => [
                         'id' => $post->creator->id,
                         'name' => $post->creator->name,

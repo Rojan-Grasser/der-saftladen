@@ -5,6 +5,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import ReactionButtonGroup from '@/pages/forum/components/ReactionButtonGroup.vue';
 import { Topic } from '@/pages/forum/types';
 
 const { posts } = defineProps<{ posts: Topic['posts'] }>();
@@ -28,7 +29,7 @@ const formatTime = (dateString: string) => {
             <Card>
                 <CardHeader class="gap-3">
                     <CardTitle class="flex justify-between">
-                        <span>
+                        <span class="italic">
                             {{ post.user.name }}
                             <span
                                 class="text-sm font-normal text-foreground/70"
@@ -47,6 +48,8 @@ const formatTime = (dateString: string) => {
                     <CardDescription class="text-black dark:text-white">
                         {{ post.content }}
                     </CardDescription>
+
+                    <ReactionButtonGroup :post="post" />
                 </CardHeader>
             </Card>
         </div>

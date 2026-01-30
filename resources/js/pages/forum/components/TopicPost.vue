@@ -9,12 +9,23 @@ const { topic, class: className } = defineProps<{
 </script>
 
 <template>
-    <div :class="`mx-6 flex flex-col gap-5 ${className}`">
-        <div class="flex justify-between">
-            <h2 class="text-2xl font-semibold">{{ topic.title }}</h2>
-            <!-- <Button v-if="topic.isOwnPost">Bearbeiten</Button> -->
-            <EditTopic :topic="topic" v-if="topic.isOwnPost" />
+    <div :class="`mx-6 ${className} flex flex-col gap-6 `">
+        <div class="flex flex-col gap-5">
+            <div class="flex justify-between">
+                <h2 class="text-2xl font-semibold">{{ topic.title }}</h2>
+                <!-- <Button v-if="topic.isOwnPost">Bearbeiten</Button> -->
+                <EditTopic :topic="topic" v-if="topic.isOwnPost" />
+            </div>
+            <span>{{ topic.description }}</span>
         </div>
-        <span>{{ topic.description }}</span>
+
+        <div>
+            <span class="italic">
+                {{ topic.owner.name }}
+                <span class="text-sm font-normal text-foreground/70">
+                    {{ topic.owner.email }}
+                </span>
+            </span>
+        </div>
     </div>
 </template>
