@@ -1,3 +1,5 @@
+import { UserRole } from '@/types';
+
 export type User = {
     id: string;
     name: string;
@@ -24,4 +26,16 @@ export type Topic = {
     owner: User;
     posts: Array<Post>;
     createdAt: string;
+};
+
+export type MinimalTopic = {
+    id: number;
+    title: string;
+    description: string;
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        role: UserRole;
+    }
 };

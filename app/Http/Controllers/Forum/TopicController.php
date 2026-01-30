@@ -14,7 +14,7 @@ class TopicController extends Controller
 {
     private function getQueryForInstructor(string $instructorId)
     {
-        return Topic::join('user_to_professional_area as utpa', function ($join) use ($instructorId) {
+        return Topic::with(['user'])->join('user_to_professional_area as utpa', function ($join) use ($instructorId) {
             $join->on('utpa.professional_area_id', '=', 'topics.professional_area_id')
                 ->where('utpa.user_id', $instructorId);
         })
@@ -25,7 +25,7 @@ class TopicController extends Controller
 
     private function getQueryForTeacher()
     {
-        return Topic::query()
+        return Topic::with(['user'])
             ->orderBy('topics.created_at', 'desc')
             ->orderBy('topics.id', 'desc');
     }
@@ -49,9 +49,22 @@ class TopicController extends Controller
         return Inertia::render(
             'forum/Overview',
             [
-                'topics' => $query->cursorPaginate($limit)->withQueryString(),
+                'topics' => $query->cursorPaginate($limit)->withQueryString()->through(function ($topic) {
+                    return [
+                        'id' => $topic->id,
+                        'title' => $topic->title,
+                        'description' => $topic->description,
+                        'created_at' => $topic->created_at,
+                        'user' => [
+                            'id' => $topic->user->id,
+                            'name' => $topic->user->name,
+                            'email' => $topic->user->email,
+                            'role' => $topic->user->role,
+                        ],
+                    ];
+                }),
             ]
-        ); // $query->cursorPaginate($limit)->withQueryString();
+        );
     }
 
     /**

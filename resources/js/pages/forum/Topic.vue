@@ -21,8 +21,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: show.url({ topic: topic.id }),
     },
 ];
-
-console.log(JSON.parse(JSON.stringify(topic)));
 </script>
 
 <template>
@@ -32,7 +30,7 @@ console.log(JSON.parse(JSON.stringify(topic)));
         <div class="px-10 pt-4">
             <TopicPost :topic="topic" class="mb-10" />
 
-            <PostsMapper :posts="topic.posts" />
+            <PostsMapper :posts="topic.posts" :topicId="topic.id" />
         </div>
     </AppLayout>
 </template>

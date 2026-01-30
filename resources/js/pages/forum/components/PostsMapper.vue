@@ -8,7 +8,10 @@ import {
 import ReactionButtonGroup from '@/pages/forum/components/ReactionButtonGroup.vue';
 import { Topic } from '@/pages/forum/types';
 
-const { posts } = defineProps<{ posts: Topic['posts'] }>();
+const { posts, topicId } = defineProps<{
+    posts: Topic['posts'];
+    topicId: number;
+}>();
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -49,7 +52,7 @@ const formatTime = (dateString: string) => {
                         {{ post.content }}
                     </CardDescription>
 
-                    <ReactionButtonGroup :post="post" />
+                    <ReactionButtonGroup :post="post" :topicId="topicId" />
                 </CardHeader>
             </Card>
         </div>

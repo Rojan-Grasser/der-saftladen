@@ -50,9 +50,9 @@ Route::middleware(['auth', 'verified', 'active'])
         Route::middleware([])
             ->prefix('topics/{topicId}')
             ->group(function () {
-                Route::get('posts/{postId}/reactions', [PostReactionController::class, 'index']);
-                Route::post('posts/{postId}/reactions', [PostReactionController::class, 'store']);
-                Route::delete('posts/{postId}/reactions', [PostReactionController::class, 'destroy']);
+                Route::get('posts/{postId}/reactions', [PostReactionController::class, 'index'])->name('posts.reactions.index');
+                Route::post('posts/{postId}/reactions', [PostReactionController::class, 'store'])->name('posts.reactions.store');
+                Route::delete('posts/{postId}/reactions', [PostReactionController::class, 'destroy'])->name('posts.reactions.destroy');
 
                 Route::resource('posts', PostController::class);
             });

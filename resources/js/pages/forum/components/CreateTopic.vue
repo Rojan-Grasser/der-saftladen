@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
+import { PlusIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 import { Button } from '@/components/ui/button';
@@ -15,20 +16,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Topic } from '@/pages/forum/types';
 import topics from '@/routes/topics';
 
-const { topic } = defineProps<{ topic: Topic }>();
+const { areaId } = defineProps<{ areaId: string }>();
 
 const open = ref(false);
 
 const form = useForm({
-    title: topic.title,
-    description: topic.description,
+    title: '',
+    description: '',
 });
 
 const submit = () => {
-    form.put(topics.update({ topic: topic.id }).url, {
+    form.post(topics.store({ query: { professional_area_id: areaId } }).url, {
         onSuccess: () => {
             open.value = false;
         },
@@ -39,14 +39,14 @@ const submit = () => {
 <template>
     <Dialog :open="open" @update:open="(o) => (open = o)">
         <DialogTrigger as-child>
-            <Button>Bearbeiten</Button>
+            <Button><PlusIcon /> Erstellen</Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-2xl">
             <form @submit.prevent="submit">
                 <DialogHeader>
-                    <DialogTitle>Thema Bearbeiten</DialogTitle>
+                    <DialogTitle>Thema Erstellen</DialogTitle>
                     <DialogDescription>
-                        Ändere dein Thema hier. Um es zu speichern drücke
+                        Erstelle dein Thema hier. Um es zu speichern drücke
                         "Speichern"
                     </DialogDescription>
                 </DialogHeader>
