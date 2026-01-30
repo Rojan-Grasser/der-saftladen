@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ProfessionalAreaController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Forum\PostController;
 use App\Http\Controllers\Calender\AppointmentController;
+use App\Http\Controllers\Forum\PostReactionController;
 use App\Http\Controllers\Forum\TopicController;
 use App\Http\Middleware\EnsureInstructorHasAccess;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,10 @@ Route::middleware(['auth', 'verified', 'active'])
         Route::middleware(['instructor-has-access'])
             ->prefix('topics/{topicId}')
             ->group(function () {
+                Route::get('posts/{postId}/reactions', [PostReactionController::class, 'index']);
+                Route::post('posts/{postId}/reactions', [PostReactionController::class, 'store']);
+                Route::delete('posts/{postId}/reactions', [PostReactionController::class, 'destroy']);
+
                 Route::resource('posts', PostController::class);
             });
 
