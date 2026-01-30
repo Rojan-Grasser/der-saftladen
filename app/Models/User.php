@@ -18,7 +18,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass-assignable.
      *
      * @var list<string>
      */
@@ -26,7 +26,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
         'status',
     ];
 
@@ -57,7 +56,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function role(): User|HasMany
+    public function roles(): HasMany
     {
         return $this->hasMany(UserRole::class);
     }
@@ -74,10 +73,7 @@ class User extends Authenticatable
      * @param Role|Role[] $roles
      * @param bool $requireAll If true, the user must have ALL roles
      */
-    public function hasRoles(
-        Role|array $roles,
-        bool       $requireAll = false
-    ): bool
+    public function hasRoles(Role|array $roles, bool $requireAll = false): bool
     {
         $roles = is_array($roles) ? $roles : [$roles];
 
@@ -86,7 +82,7 @@ class User extends Authenticatable
             $roles
         );
 
-        $query = $this->role()
+        $query = $this->roles()
             ->whereIn('role', $roleValues);
 
         if ($requireAll) {
@@ -106,8 +102,8 @@ class User extends Authenticatable
         $roles = is_array($roles) ? $roles : [$roles];
 
         foreach ($roles as $role) {
-            // Avoid duplicates
-            $this->role()->firstOrCreate([
+            UserRole::firstOrCreate([
+                'user_id' => $this->id,
                 'role' => $role->value,
             ]);
         }
@@ -122,7 +118,7 @@ class User extends Authenticatable
     {
         $roles = is_array($roles) ? $roles : [$roles];
 
-        $this->roleAssignments()
+        $this->roles()
             ->whereIn('role', array_map(fn($r) => $r->value, $roles))
             ->delete();
     }

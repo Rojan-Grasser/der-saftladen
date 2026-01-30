@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -17,6 +18,8 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
+
+const roles = ref<string[]>([]);
 </script>
 
 <template>
@@ -61,8 +64,8 @@ import { store } from '@/routes/register';
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="roles">Role</Label>
-                    <Select multiple name="roles">
+                    <Label for="roles">Rollen</Label>
+                    <Select v-model="roles" multiple>
                         <SelectTrigger id="roles" :tabindex="3" class="w-full">
                             <SelectValue placeholder="Wählen Sie Rollen aus" />
                         </SelectTrigger>
@@ -74,6 +77,13 @@ import { store } from '@/routes/register';
                             <SelectItem value="admin"> Admin </SelectItem>
                         </SelectContent>
                     </Select>
+                    <input
+                        v-for="role in roles"
+                        :key="role"
+                        :value="role"
+                        name="roles[]"
+                        type="hidden"
+                    />
                     <InputError :message="errors.roles" />
                 </div>
 
