@@ -9,7 +9,7 @@ import reactions from '@/routes/posts/reactions';
 
 type Reaction = 'like' | 'dislike';
 
-const { post, topicId } = defineProps<{ post: Post; topicId: number }>();
+const { post, topicId, areaId } = defineProps<{ post: Post; topicId: number; areaId: number }>();
 
 const reaction = ref<Reaction | null>(post.reaction);
 const reactionAmounts = ref<{ like: number; dislike: number }>({
@@ -22,7 +22,7 @@ const changeReaction = (button: Reaction) => {
         reaction.value = null;
         reactionAmounts.value[button]--;
 
-        router.delete(reactions.destroy({ postId: post.id, topicId }).url, {
+        router.delete(reactions.destroy({ postId: post.id, topicId, areaId }).url, {
             preserveScroll: true,
         });
         return;
@@ -35,7 +35,7 @@ const changeReaction = (button: Reaction) => {
     reaction.value = button;
 
     router.post(
-        reactions.store({ postId: post.id, topicId }).url,
+        reactions.store({ postId: post.id, topicId, areaId }).url,
         {
             type: button,
         },

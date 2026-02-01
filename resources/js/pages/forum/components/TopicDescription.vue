@@ -14,7 +14,6 @@ for (let i = 0; i < description.length; i += size) {
 
 const currentShowAllIdx = ref<number>(1);
 
-console.log(currentShowAllIdx.value, splitDesc.length);
 </script>
 
 <template>

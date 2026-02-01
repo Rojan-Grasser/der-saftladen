@@ -35,7 +35,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         <div class="px-10 pt-4">
             <TopicPost :topic="topic" class="mb-10" :area-id="area.id" />
 
-            <PostsMapper :posts="topic.posts" :topicId="topic.id" />
+            <PostsMapper :posts="topic.posts" :topicId="topic.id" :area-id="area.id" />
         </div>
     </AppLayout>
 </template>

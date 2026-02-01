@@ -11,6 +11,7 @@ import { Topic } from '@/pages/forum/types';
 const { posts, topicId } = defineProps<{
     posts: Topic['posts'];
     topicId: number;
+    areaId: number;
 }>();
 
 const formatDate = (dateString: string) => {
@@ -52,7 +53,7 @@ const formatTime = (dateString: string) => {
                         {{ post.content }}
                     </CardDescription>
 
-                    <ReactionButtonGroup :post="post" :topicId="topicId" />
+                    <ReactionButtonGroup :post="post" :topicId="topicId" :area-id="areaId" />
                 </CardHeader>
             </Card>
         </div>
