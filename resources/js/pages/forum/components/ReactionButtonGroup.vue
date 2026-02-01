@@ -9,7 +9,11 @@ import reactions from '@/routes/posts/reactions';
 
 type Reaction = 'like' | 'dislike';
 
-const { post, topicId, areaId } = defineProps<{ post: Post; topicId: number; areaId: number }>();
+const { post, topicId, areaId } = defineProps<{
+    post: Post;
+    topicId: number;
+    areaId: number;
+}>();
 
 const reaction = ref<Reaction | null>(post.reaction);
 const reactionAmounts = ref<{ like: number; dislike: number }>({
@@ -22,9 +26,12 @@ const changeReaction = (button: Reaction) => {
         reaction.value = null;
         reactionAmounts.value[button]--;
 
-        router.delete(reactions.destroy({ postId: post.id, topicId, areaId }).url, {
-            preserveScroll: true,
-        });
+        router.delete(
+            reactions.destroy({ postId: post.id, topicId, areaId }).url,
+            {
+                preserveScroll: true,
+            },
+        );
         return;
     }
 
@@ -51,19 +58,15 @@ const changeReaction = (button: Reaction) => {
         <Button
             @click="() => changeReaction('like')"
             variant="outline"
-            class="group w-20 justify-start gap-3 overflow-hidden rounded-none rounded-l-md shadow-none transition-all duration-200 not-hover:w-10 hover:bg-lime-500/10 hover:text-lime-500 focus-visible:z-10 dark:hover:bg-lime-400/10 dark:hover:text-lime-400"
+            :class="`group justify-start gap-3 overflow-hidden rounded-none rounded-l-md shadow-none transition-all duration-200 hover:bg-lime-500/10 hover:text-lime-500 focus-visible:z-10 dark:hover:bg-lime-400/10 dark:hover:text-lime-400 ${reaction === 'like' && 'bg-lime-500/10 text-lime-500 dark:bg-lime-400/10 dark:text-lime-400'}`"
         >
-            <ThumbsUpIcon
-                :class="
-                    reaction === 'like' && 'text-lime-500 dark:text-lime-400'
-                "
-            />
+            <ThumbsUpIcon />
             {{ reactionAmounts.like }}
         </Button>
         <Button
             @click="() => changeReaction('dislike')"
             variant="outline"
-            class="group w-24.5 justify-end gap-3 overflow-hidden rounded-none rounded-r-md shadow-none transition-all duration-200 not-hover:w-10 hover:bg-destructive/10! hover:text-destructive focus-visible:z-10"
+            :class="`group justify-end gap-3 overflow-hidden rounded-none rounded-r-md shadow-none transition-all duration-200 hover:bg-destructive/10! hover:text-destructive focus-visible:z-10 ${reaction === 'dislike' && 'bg-destructive/10! text-destructive'}`"
         >
             {{ reactionAmounts.dislike }}
             <ThumbsDownIcon
