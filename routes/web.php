@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ProfessionalAreaController;
 use App\Http\Controllers\Forum\ProfessionalAreaController as ForumProfessionalAreaController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Forum\PostController;
+use App\Http\Controllers\Calender\AppointmentController;
 use App\Http\Controllers\Forum\PostReactionController;
 use App\Http\Controllers\Forum\TopicController;
 use App\Http\Middleware\EnsureInstructorHasAccess;
@@ -22,6 +23,12 @@ Route::get('/', function () {
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['request-logging', 'auth', 'verified', 'active'])->name('dashboard');
+
+
+
+Route::middleware(['auth', 'verified', 'active'])->group(function () {
+    Route::resource('appointments', AppointmentController::class)->except(['create', 'edit', 'show']);
+});
 
 Route::middleware(['request-logging', 'auth', 'verified', 'active', 'admin'])
     ->prefix('admin')
