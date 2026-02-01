@@ -18,7 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Topic } from '@/pages/forum/types';
 import topics from '@/routes/topics';
 
-const { topic } = defineProps<{ topic: Topic }>();
+const { topic, areaId } = defineProps<{ topic: Topic; areaId: number }>();
 
 const open = ref(false);
 
@@ -28,7 +28,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.put(topics.update({ topic: topic.id }).url, {
+    form.put(topics.update({ topicId: topic.id, areaId }).url, {
         onSuccess: () => {
             open.value = false;
         },
@@ -67,6 +67,7 @@ const submit = () => {
                             v-model="form.description"
                             name="description"
                             :errorMessage="form.errors.description"
+                            class="max-h-[70vh] resize-y overflow-auto"
                         />
                     </div>
                 </div>

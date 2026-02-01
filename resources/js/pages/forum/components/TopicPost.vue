@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import EditTopic from '@/pages/forum/components/EditTopic.vue';
+import TopicDescription from '@/pages/forum/components/TopicDescription.vue';
 import { Topic } from '@/pages/forum/types';
 
-const { topic, class: className } = defineProps<{
+const {
+    topic,
+    class: className,
+    areaId,
+} = defineProps<{
     topic: Topic;
     class?: string;
+    areaId: number;
 }>();
 </script>
 
@@ -14,18 +20,23 @@ const { topic, class: className } = defineProps<{
             <div class="flex justify-between">
                 <h2 class="text-2xl font-semibold">{{ topic.title }}</h2>
                 <!-- <Button v-if="topic.isOwnPost">Bearbeiten</Button> -->
-                <EditTopic :topic="topic" v-if="topic.isOwnPost" />
+                <EditTopic
+                    :topic="topic"
+                    v-if="topic.isOwnPost"
+                    :area-id="areaId"
+                />
             </div>
-            <span class="whitespace-pre-line">{{ topic.description }}</span>
-        </div>
 
-        <div>
-            <span class="italic text-xs">
-                {{ topic.owner.name }}
-                <span class="text-sm font-normal text-foreground/70">
-                    {{ topic.owner.email }}
+            <div>
+                <span class="text-xs italic">
+                    {{ topic.owner.name }}
+                    <span class="text-sm font-normal text-foreground/70">
+                        {{ topic.owner.email }}
+                    </span>
                 </span>
-            </span>
+            </div>
+
+            <TopicDescription :description="topic.description" />
         </div>
     </div>
 </template>

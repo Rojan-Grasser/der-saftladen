@@ -39,3 +39,9 @@ export type MinimalTopic = {
         role: UserRole;
     }
 };
+
+export type ProfessionalArea = {
+    id: number;
+    name: string;
+    description: string;
+};

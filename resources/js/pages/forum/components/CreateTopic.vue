@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import topics from '@/routes/topics';
 
-const { areaId } = defineProps<{ areaId: string }>();
+const { areaId } = defineProps<{ areaId: number }>();
 
 const open = ref(false);
 
@@ -28,7 +28,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(topics.store({ query: { professional_area_id: areaId } }).url, {
+    form.post(topics.store({ areaId: areaId }).url, {
         onSuccess: () => {
             open.value = false;
         },
@@ -67,6 +67,7 @@ const submit = () => {
                             v-model="form.description"
                             name="description"
                             :errorMessage="form.errors.description"
+                            class="max-h-[70vh] resize-y overflow-auto"
                         />
                     </div>
                 </div>

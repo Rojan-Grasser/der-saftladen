@@ -15,7 +15,7 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(string $topicId)
+    public function index(string $areaId, string $topicId)
     {
         return Topic::findOrFail($topicId)->posts()->paginate(25);
     }
@@ -23,7 +23,7 @@ class PostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request, string $topicId)
+    public function create(Request $request, string $areaId, string $topicId)
     {
         //
     }
@@ -31,7 +31,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, string $topicId)
+    public function store(Request $request, string $areaId, string $topicId)
     {
         $validated = $request->validate([
             'content' => ['required', 'string'],
@@ -49,7 +49,7 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $topicId, string $postId)
+    public function show(string $areaId, string $topicId, string $postId)
     {
         return ForumPost::findOrFail($postId);
     }
@@ -65,7 +65,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $topicId, string $postId)
+    public function update(Request $request, string $areaId, string $topicId, string $postId)
     {
         $validated = $request->validate([
             'content' => ['required', 'string'],
@@ -85,7 +85,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, string $topicId, $postId)
+    public function destroy(Request $request, string $areaId, string $topicId, $postId)
     {
         $post = ForumPost::findOrFail($postId);
 

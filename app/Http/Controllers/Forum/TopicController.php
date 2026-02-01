@@ -5,49 +5,33 @@ namespace App\Http\Controllers\Forum;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Instructor;
-use App\Models\PostReaction;
+use App\Models\ProfessionalArea;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TopicController extends Controller
 {
-    private function getQueryForInstructor(string $instructorId)
-    {
-        return Topic::with(['user'])->join('user_to_professional_area as utpa', function ($join) use ($instructorId) {
-            $join->on('utpa.professional_area_id', '=', 'topics.professional_area_id')
-                ->where('utpa.user_id', $instructorId);
-        })
-            ->select('topics.*')
-            ->orderBy('topics.created_at', 'desc')
-            ->orderBy('topics.id', 'desc');
-    }
-
-    private function getQueryForTeacher()
-    {
-        return Topic::with(['user'])
-            ->orderBy('topics.created_at', 'desc')
-            ->orderBy('topics.id', 'desc');
-    }
-
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $areaId)
     {
         $validated = $request->validate([
             'cursor' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
 
-        $query = $request->user()->hasRole(UserRole::INSTRUCTOR) ?
-            $this->getQueryForInstructor(auth()->id()) :
-            $this->getQueryForTeacher();
+        $area = ProfessionalArea::findOrFail($areaId);
+
+        $query = Topic::with('user')
+            ->where('topics.professional_area_id', '=', $areaId)
+            ->orderBy('topics.created_at', 'desc');
 
         $limit = $validated['limit'] ?? 15;
 
         return Inertia::render(
-            'forum/Overview',
+            'forum/Topics',
             [
                 'topics' => $query->cursorPaginate($limit)->withQueryString()->through(function ($topic) {
                     return [
@@ -63,6 +47,11 @@ class TopicController extends Controller
                         ],
                     ];
                 }),
+                'area' => [
+                    'id' => $area->id,
+                    'name' => $area->name,
+                    'description' => $area->description,
+                ],
             ]
         );
     }
@@ -78,35 +67,40 @@ class TopicController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, string $areaId)
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'min:1', 'max:255'],
             'description' => ['required', 'string'],
-            'professional_area_id' => ['required', 'integer', 'exists:professional_areas,id'],
         ]);
 
         if (
             $request->user()->hasRole(UserRole::INSTRUCTOR) &&
-            !Instructor::find($request->user()->id)->hasAccess($validated['professional_area_id'])
+            !Instructor::find($request->user()->id)->hasAccess($areaId)
         ) {
             return back()->with('error', 'Du hast keinen zugriff auf das ausgewählte professionelle Fachgebiet.');
         }
 
+        // Check existence
+        ProfessionalArea::findOrFail($areaId);
+
         $topic = Topic::create([
             ...$validated,
+            'professional_area_id' => $areaId,
             'user_id' => auth()->id(),
         ]);
 
-        return redirect('/forum/topics/' . $topic->id);
+        return redirect("/forum/area/$areaId/topics/" . $topic->id);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $id)
+    public function show(Request $request, string $areaId, string $topicId)
     {
         $currentUserId = $request->user()->id;
+
+        $area = ProfessionalArea::findOrFail($areaId);
 
         $topic = Topic::with([
             'posts' => function ($query) {
@@ -124,7 +118,9 @@ class TopicController extends Controller
             'posts.reactions' => function ($query) use ($currentUserId) {
                 $query->where('user_id', $currentUserId);
             },
-        ])->findOrFail($id);
+        ])
+            ->where('topics.professional_area_id', '=', $areaId)
+            ->findOrFail($topicId);
 
         if (
             $request->user()->hasRole(UserRole::INSTRUCTOR) &&
@@ -134,38 +130,44 @@ class TopicController extends Controller
         }
 
         // Rendering of single topic on /forum/topics/{id}
-        // Todo: Filter out data which is not necessary for the single topic view
         $owner = $topic->user;
 
         return Inertia::render('forum/Topic', [
-            'id' => $topic->id,
-            'title' => $topic->title,
-            'description' => $topic->description,
-            'isOwnPost' => $topic->user_id === $request->user()->id,
-            'owner' => [
-                'id' => $owner->id,
-                'name' => $owner->name,
-                'email' => $owner->email,
-                'role' => $owner->role,
+            'topic' => [
+                'id' => $topic->id,
+                'title' => $topic->title,
+                'description' => $topic->description,
+                'isOwnPost' => $topic->user_id === $request->user()->id,
+                'owner' => [
+                    'id' => $owner->id,
+                    'name' => $owner->name,
+                    'email' => $owner->email,
+                    'role' => $owner->role,
+                ],
+                'posts' => $topic->posts->map(function ($post) {
+                    return [
+                        'id' => $post->id,
+                        'content' => $post->content,
+                        'created_at' => $post->created_at,
+                        'updated_at' => $post->updated_at,
+                        'reaction' => $post->reactions->first()?->type,
+                        'likesCount' => $post->likes_count,
+                        'dislikesCount' => $post->dislikes_count,
+                        'user' => [
+                            'id' => $post->creator->id,
+                            'name' => $post->creator->name,
+                            'email' => $post->creator->email,
+                            'role' => $post->creator->role,
+                        ],
+                    ];
+                }),
+                'createdAt' => $topic->created_at,
             ],
-            'posts' => $topic->posts->map(function ($post) {
-                return [
-                    'id' => $post->id,
-                    'content' => $post->content,
-                    'created_at' => $post->created_at,
-                    'updated_at' => $post->updated_at,
-                    'reaction' => $post->reactions->first()?->type,
-                    'likesCount' => $post->likes_count,
-                    'dislikesCount' => $post->dislikes_count,
-                    'user' => [
-                        'id' => $post->creator->id,
-                        'name' => $post->creator->name,
-                        'email' => $post->creator->email,
-                        'role' => $post->creator->role,
-                    ],
-                ];
-            }),
-            'createdAt' => $topic->created_at,
+            'area' => [
+                'id' => $area->id,
+                'name' => $area->name,
+                'description' => $area->description,
+            ],
         ]);
     }
 
@@ -180,7 +182,7 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $topicID, string $id)
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -201,7 +203,7 @@ class TopicController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $topicID, string $id)
     {
         $topic = Topic::findOrFail($id);
 
