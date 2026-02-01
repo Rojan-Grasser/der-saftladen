@@ -6,6 +6,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import ReactionButtonGroup from '@/pages/forum/components/ReactionButtonGroup.vue';
+import { formatDate, formatTime } from '@/pages/forum/dateStrings';
 import { Topic } from '@/pages/forum/types';
 
 const { posts, topicId } = defineProps<{
@@ -13,18 +14,6 @@ const { posts, topicId } = defineProps<{
     topicId: number;
     areaId: number;
 }>();
-
-const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return `${date.getUTCDate()}.${date.getUTCMonth() + 1}.${date.getUTCFullYear()}`;
-};
-
-const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return `${date.getUTCHours().toString().padStart(2, '0')}:${date.getUTCMinutes().toString().padStart(2, '0')}`;
-};
 </script>
 
 <template>
@@ -53,7 +42,11 @@ const formatTime = (dateString: string) => {
                         {{ post.content }}
                     </CardDescription>
 
-                    <ReactionButtonGroup :post="post" :topicId="topicId" :area-id="areaId" />
+                    <ReactionButtonGroup
+                        :post="post"
+                        :topicId="topicId"
+                        :area-id="areaId"
+                    />
                 </CardHeader>
             </Card>
         </div>

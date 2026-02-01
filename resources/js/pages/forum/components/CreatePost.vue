@@ -13,25 +13,23 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import topics from '@/routes/topics';
+import posts from '@/routes/posts';
 
-const { areaId } = defineProps<{ areaId: number }>();
+const { areaId, topicId } = defineProps<{ areaId: number; topicId: number }>();
 
 const open = ref(false);
 
 const form = useForm({
-    title: '',
-    description: '',
+    content: '',
 });
 
 const submit = () => {
-    form.post(topics.store({ areaId: areaId }).url, {
+    form.post(posts.store({ areaId, topicId }).url, {
         onSuccess: () => {
             open.value = false;
-        },
+        }
     });
 };
 
@@ -45,34 +43,27 @@ watch(open, () => {
 <template>
     <Dialog :open="open" @update:open="(o) => (open = o)">
         <DialogTrigger as-child>
-            <Button><PlusIcon /> Erstellen</Button>
+            <Button class="fixed right-8 bottom-8"
+                ><PlusIcon /> Kommentar</Button
+            >
         </DialogTrigger>
         <DialogContent class="sm:max-w-2xl">
             <form @submit.prevent="submit">
                 <DialogHeader>
-                    <DialogTitle>Thema Erstellen</DialogTitle>
+                    <DialogTitle>Kommentar Erstellen</DialogTitle>
                     <DialogDescription>
-                        Erstelle dein Thema hier. Um es zu speichern drücke
-                        "Speichern"
+                        Erstelle hier einen Kommentar. Um ihn zu erstellen
+                        drücke "Erstellen"
                     </DialogDescription>
                 </DialogHeader>
-                <div class="mb-5 grid gap-4">
+                <div class="my-5 grid gap-4">
                     <div class="grid gap-3">
-                        <Label for="title-1">Titel</Label>
-                        <Input
-                            id="title-1"
-                            v-model="form.title"
-                            name="title"
-                            :errorMessage="form.errors.title"
-                        />
-                    </div>
-                    <div class="grid gap-3">
-                        <Label for="description-1">Beschreibung</Label>
+                        <Label for="description-1">Inhalt</Label>
                         <Textarea
                             id="description-1"
-                            v-model="form.description"
+                            v-model="form.content"
                             name="description"
-                            :errorMessage="form.errors.description"
+                            :errorMessage="form.errors.content"
                             class="max-h-[70vh] resize-y overflow-auto"
                         />
                     </div>
@@ -87,7 +78,7 @@ watch(open, () => {
                         Abbrechen
                     </Button>
                     <Button type="submit" :disabled="form.processing">
-                        Speichern
+                        Erstellen
                     </Button>
                 </DialogFooter>
             </form>

@@ -43,7 +43,7 @@ class PostController extends Controller
             'topic_id' => $topicId,
         ]);
 
-        return redirect("/forum/topics/$topicId/posts/" . $post->id);
+        return back()->with('success', 'Der kommentar wurde erstellt');
     }
 
     /**

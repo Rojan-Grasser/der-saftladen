@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -34,6 +34,12 @@ const submit = () => {
         },
     });
 };
+
+watch(open, () => {
+    if (!open.value) {
+        form.reset();
+    }
+});
 </script>
 
 <template>
